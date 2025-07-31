@@ -2,6 +2,12 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: #F8F7F6; /* Warm Neutral Background */
     color: #4A4A4A; /* Dark Gray for text */
+/* Modal açıkken body'nin kaymasını engelle */
+.body-no-scroll {
+    overflow: hidden;
+    position: relative; /* Mobil cihazlarda kaymayı engellemek için */
+    touch-action: none; /* Dokunmatik kaydırmayı devre dışı bırakır */
+}
 }
 .custom-shadow {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);

@@ -37,24 +37,46 @@ document.addEventListener('DOMContentLoaded', () => {
     // Modal Açma ve Kapatma İşlevleri
     const openModalButtons = document.querySelectorAll('[onclick^="openModal"]');
     const closeModalButtons = document.querySelectorAll('[id^="close-modal"]');
+    let scrollPosition = 0; // Sayfanın mevcut kaydırma pozisyonunu saklamak için
 
+    // Modal açıldığında body kaydırmasını engelle
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('hidden');
+
+        // Sayfanın mevcut kaydırma pozisyonunu al
+        scrollPosition = window.scrollY;
+
+        // Body'yi sabitle ve kaydırmayı engelle
+        document.body.style.top = `-${scrollPosition}px`;
+        document.body.classList.add('body-no-scroll');
+    }
+
+    // Modal kapandığında body kaydırmasını geri getir
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.add('hidden');
+
+        // Body'yi eski haline getir ve kaydırmayı geri yükle
+        document.body.classList.remove('body-no-scroll');
+        document.body.style.top = '';
+        window.scrollTo(0, scrollPosition); // Sayfayı eski pozisyona kaydır
+    }
+
+    // Modal açma butonları için
     openModalButtons.forEach(button => {
         button.addEventListener('click', (event) => {
             event.preventDefault(); // Bağlantının varsayılan davranışını engelle
             const modalId = button.getAttribute('onclick').match(/'([^']+)'/)[1];
-            document.getElementById(modalId).classList.remove('hidden');
+            openModal(modalId);
         });
     });
 
+    // Modal kapatma butonları için
     closeModalButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const modal = button.closest('.hidden') || button.closest('.fixed');
-            modal.classList.add('hidden');
+            const modalId = button.id.replace('close-', '');
+            closeModal(modalId);
         });
     });
 });
-
-    document.querySelectorAll('.section-fade-in').forEach(section => {
-        observer.observe(section);
-    });
-
