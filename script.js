@@ -33,4 +33,28 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.section-fade-in').forEach(section => {
         observer.observe(section);
     });
+
+    // Modal Açma ve Kapatma İşlevleri
+    const openModalButtons = document.querySelectorAll('[onclick^="openModal"]');
+    const closeModalButtons = document.querySelectorAll('[id^="close-modal"]');
+
+    openModalButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault(); // Bağlantının varsayılan davranışını engelle
+            const modalId = button.getAttribute('onclick').match(/'([^']+)'/)[1];
+            document.getElementById(modalId).classList.remove('hidden');
+        });
+    });
+
+    closeModalButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const modal = button.closest('.hidden') || button.closest('.fixed');
+            modal.classList.add('hidden');
+        });
+    });
 });
+
+    document.querySelectorAll('.section-fade-in').forEach(section => {
+        observer.observe(section);
+    });
+
