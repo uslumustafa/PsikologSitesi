@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randevu Yönetimi - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <style>
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .fc-event {
+            cursor: pointer;
+        }
+        .status-pending { background-color: #fbbf24; }
+        .status-approved { background-color: #10b981; }
+        .status-rejected { background-color: #ef4444; }
+        .status-completed { background-color: #3b82f6; }
+        .status-cancelled { background-color: #6b7280; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white shadow-lg">
+            <div class="p-6">
+                <div class="flex items-center mb-8">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-user-shield text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold">Admin Panel</h2>
+                        <p class="text-sm text-white/80">Psikolog Onur Uslu</p>
+                    </div>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="dashboard.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-tachometer-alt mr-3"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-calendar-alt mr-3"></i>
+                        Randevular
+                    </a>
+                    <a href="customers.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-users mr-3"></i>
+                        Müşteriler
+                    </a>
+                    <a href="schedule.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-clock mr-3"></i>
+                        Çalışma Saatleri
+                    </a>
+                    <a href="holidays.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-calendar-times mr-3"></i>
+                        Tatil Günleri
+                    </a>
+                    <a href="blog.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-blog mr-3"></i>
+                        Blog Yönetimi
+                    </a>
+                    <a href="services.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-cogs mr-3"></i>
+                        Hizmetler
+                    </a>
+                    <a href="messages.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-envelope mr-3"></i>
+                        Mesajlar
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="absolute bottom-0 w-64 p-6">
+                <button id="logoutBtn" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Çıkış Yap
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Randevu Yönetimi</h1>
+                        <p class="text-gray-600">Randevuları görüntüle ve yönet</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="addAppointmentBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Yeni Randevu
+                        </button>
+                        <div class="flex items-center space-x-3">
+                            <img src="https://via.placeholder.com/40" alt="Admin" class="w-10 h-10 rounded-full">
+                            <div>
+                                <p class="font-semibold text-gray-800" id="adminName">Admin</p>
+                                <p class="text-sm text-gray-600">Yönetici</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Filters -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Durum</label>
+                            <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Tümü</option>
+                                <option value="pending">Beklemede</option>
+                                <option value="approved">Onaylandı</option>
+                                <option value="rejected">Reddedildi</option>
+                                <option value="completed">Tamamlandı</option>
+                                <option value="cancelled">İptal Edildi</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tarih Aralığı</label>
+                            <input type="date" id="dateFrom" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Bitiş Tarihi</label>
+                            <input type="date" id="dateTo" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex items-end">
+                            <button id="filterBtn" class="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-filter mr-2"></i>Filtrele
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div id="calendar"></div>
+                </div>
+
+                <!-- Appointments List -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800">Randevu Listesi</h3>
+                        <div class="flex items-center space-x-2">
+                            <button id="listViewBtn" class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm">
+                                <i class="fas fa-list mr-1"></i>Liste
+                            </button>
+                            <button id="calendarViewBtn" class="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg text-sm">
+                                <i class="fas fa-calendar mr-1"></i>Takvim
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Müşteri</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Tarih</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Saat</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Hizmet</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Durum</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointmentsTableBody">
+                                <!-- Dinamik içerik -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-800" id="modalTitle">Randevu Detayları</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="appointmentForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Müşteri</label>
+                                <select id="customerSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    <option value="">Müşteri Seçin</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Hizmet</label>
+                                <select id="serviceSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    <option value="">Hizmet Seçin</option>
+                                    <option value="individual">Bireysel Terapi</option>
+                                    <option value="couple">Çift Terapisi</option>
+                                    <option value="family">Aile Terapisi</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tarih</label>
+                                <input type="date" id="appointmentDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Saat</label>
+                                <input type="time" id="appointmentTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Durum</label>
+                                <select id="appointmentStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="pending">Beklemede</option>
+                                    <option value="approved">Onaylandı</option>
+                                    <option value="rejected">Reddedildi</option>
+                                    <option value="completed">Tamamlandı</option>
+                                    <option value="cancelled">İptal Edildi</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Ücret</label>
+                                <input type="number" id="appointmentPrice" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="₺">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Notlar</label>
+                            <textarea id="appointmentNotes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Randevu notları..."></textarea>
+                        </div>
+                        
+                        <div class="flex items-center justify-end space-x-4 mt-6">
+                            <button type="button" id="cancelBtn" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                İptal
+                            </button>
+                            <button type="submit" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                <i class="fas fa-save mr-2"></i>Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let adminToken = localStorage.getItem('adminToken');
+        let adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+        let calendar;
+        let currentAppointmentId = null;
+
+        // Check authentication
+        if (!adminToken) {
+            window.location.href = 'login.html';
+        }
+
+        // Update admin info
+        document.getElementById('adminName').textContent = adminUser.name || 'Admin';
+
+        // Initialize FullCalendar
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'tr',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: function(info, successCallback, failureCallback) {
+                    loadAppointments(successCallback);
+                },
+                eventClick: function(info) {
+                    viewAppointment(info.event.id);
+                },
+                dateClick: function(info) {
+                    addAppointment(info.dateStr);
+                },
+                eventDidMount: function(info) {
+                    info.el.classList.add('status-' + info.event.extendedProps.status);
+                }
+            });
+            calendar.render();
+            
+            loadAppointmentsList();
+            loadCustomers();
+        });
+
+        // Load appointments for calendar
+        async function loadAppointments(successCallback) {
+            try {
+                const response = await fetch('http://localhost:5001/api/admin/appointments', {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const appointments = await response.json();
+                    const events = appointments.map(appointment => ({
+                        id: appointment._id,
+                        title: `${appointment.customerName} - ${appointment.service}`,
+                        start: `${appointment.date}T${appointment.time}`,
+                        status: appointment.status,
+                        extendedProps: {
+                            customerName: appointment.customerName,
+                            service: appointment.service,
+                            status: appointment.status,
+                            notes: appointment.notes,
+                            price: appointment.price
+                        }
+                    }));
+                    successCallback(events);
+                }
+            } catch (error) {
+                console.error('Randevular yüklenirken hata:', error);
+            }
+        }
+
+        // Load appointments list
+        async function loadAppointmentsList() {
+            try {
+                const response = await fetch('http://localhost:5001/api/admin/appointments', {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const appointments = await response.json();
+                    updateAppointmentsTable(appointments);
+                }
+            } catch (error) {
+                console.error('Randevu listesi yüklenirken hata:', error);
+            }
+        }
+
+        // Update appointments table
+        function updateAppointmentsTable(appointments) {
+            const tbody = document.getElementById('appointmentsTableBody');
+            tbody.innerHTML = '';
+            
+            if (!appointments || appointments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">Henüz randevu bulunmuyor</td></tr>';
+                return;
+            }
+            
+            appointments.forEach(appointment => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-100 hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="py-3 px-4">${appointment.customerName}</td>
+                    <td class="py-3 px-4">${new Date(appointment.date).toLocaleDateString('tr-TR')}</td>
+                    <td class="py-3 px-4">${appointment.time}</td>
+                    <td class="py-3 px-4">${getServiceName(appointment.service)}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(appointment.status)}">
+                            ${getStatusText(appointment.status)}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <button class="text-blue-600 hover:text-blue-800 mr-2" onclick="viewAppointment('${appointment._id}')" title="Görüntüle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="text-green-600 hover:text-green-800 mr-2" onclick="approveAppointment('${appointment._id}')" title="Onayla">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800 mr-2" onclick="rejectAppointment('${appointment._id}')" title="Reddet">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="text-yellow-600 hover:text-yellow-800" onclick="editAppointment('${appointment._id}')" title="Düzenle">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load customers for select
+        async function loadCustomers() {
+            try {
+                const response = await fetch('http://localhost:5001/api/admin/customers', {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const customers = await response.json();
+                    const select = document.getElementById('customerSelect');
+                    select.innerHTML = '<option value="">Müşteri Seçin</option>';
+                    
+                    customers.forEach(customer => {
+                        const option = document.createElement('option');
+                        option.value = customer._id;
+                        option.textContent = `${customer.name} ${customer.surname} - ${customer.email}`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Müşteriler yüklenirken hata:', error);
+            }
+        }
+
+        // Helper functions
+        function getServiceName(service) {
+            const services = {
+                'individual': 'Bireysel Terapi',
+                'couple': 'Çift Terapisi',
+                'family': 'Aile Terapisi'
+            };
+            return services[service] || service;
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'approved': 'bg-green-100 text-green-800',
+                'rejected': 'bg-red-100 text-red-800',
+                'completed': 'bg-blue-100 text-blue-800',
+                'cancelled': 'bg-gray-100 text-gray-800'
+            };
+            return classes[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'pending': 'Beklemede',
+                'approved': 'Onaylandı',
+                'rejected': 'Reddedildi',
+                'completed': 'Tamamlandı',
+                'cancelled': 'İptal Edildi'
+            };
+            return texts[status] || 'Bilinmiyor';
+        }
+
+        // Modal functions
+        function showModal(title) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('appointmentModal').classList.remove('hidden');
+        }
+
+        function hideModal() {
+            document.getElementById('appointmentModal').classList.add('hidden');
+            document.getElementById('appointmentForm').reset();
+            currentAppointmentId = null;
+        }
+
+        // Event handlers
+        document.getElementById('addAppointmentBtn').addEventListener('click', function() {
+            currentAppointmentId = null;
+            showModal('Yeni Randevu Ekle');
+        });
+
+        document.getElementById('closeModal').addEventListener('click', hideModal);
+        document.getElementById('cancelBtn').addEventListener('click', hideModal);
+
+        // Appointment actions
+        function addAppointment(date) {
+            currentAppointmentId = null;
+            document.getElementById('appointmentDate').value = date;
+            showModal('Yeni Randevu Ekle');
+        }
+
+        function viewAppointment(id) {
+            // Load appointment details and show in modal
+            showModal('Randevu Detayları');
+        }
+
+        function editAppointment(id) {
+            currentAppointmentId = id;
+            showModal('Randevu Düzenle');
+        }
+
+        function approveAppointment(id) {
+            updateAppointmentStatus(id, 'approved');
+        }
+
+        function rejectAppointment(id) {
+            updateAppointmentStatus(id, 'rejected');
+        }
+
+        async function updateAppointmentStatus(id, status) {
+            try {
+                const response = await fetch(`http://localhost:5001/api/admin/appointments/${id}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                
+                if (response.ok) {
+                    calendar.refetchEvents();
+                    loadAppointmentsList();
+                }
+            } catch (error) {
+                console.error('Randevu durumu güncellenirken hata:', error);
+            }
+        }
+
+        // Form submission
+        document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const appointmentData = {
+                customer: formData.get('customerSelect'),
+                service: formData.get('serviceSelect'),
+                date: formData.get('appointmentDate'),
+                time: formData.get('appointmentTime'),
+                status: formData.get('appointmentStatus'),
+                price: formData.get('appointmentPrice'),
+                notes: formData.get('appointmentNotes')
+            };
+            
+            try {
+                const url = currentAppointmentId 
+                    ? `http://localhost:5001/api/admin/appointments/${currentAppointmentId}`
+                    : 'http://localhost:5001/api/admin/appointments';
+                
+                const method = currentAppointmentId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify(appointmentData)
+                });
+                
+                if (response.ok) {
+                    hideModal();
+                    calendar.refetchEvents();
+                    loadAppointmentsList();
+                }
+            } catch (error) {
+                console.error('Randevu kaydedilirken hata:', error);
+            }
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

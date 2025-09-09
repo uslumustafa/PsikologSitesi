@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Psikolog Onur Uslu</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        .nav-item {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: inset 4px 0 0 #FFFFFF;
+        }
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .nav-item:hover::before {
+            left: 100%;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in {
+            animation: slideIn 0.8s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white shadow-lg">
+            <div class="p-6">
+                <div class="flex items-center mb-8">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-user-shield text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold">Admin Panel</h2>
+                        <p class="text-sm text-white/80">Psikolog Onur Uslu</p>
+                    </div>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="#" class="nav-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="dashboard">
+                        <i class="fas fa-tachometer-alt mr-3"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="appointments">
+                        <i class="fas fa-calendar-alt mr-3"></i>
+                        Randevular
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="customers">
+                        <i class="fas fa-users mr-3"></i>
+                        Müşteriler
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="schedule">
+                        <i class="fas fa-clock mr-3"></i>
+                        Çalışma Saatleri
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="holidays">
+                        <i class="fas fa-calendar-times mr-3"></i>
+                        Tatil Günleri
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="blog">
+                        <i class="fas fa-blog mr-3"></i>
+                        Blog Yönetimi
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="services">
+                        <i class="fas fa-cogs mr-3"></i>
+                        Hizmetler
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="messages">
+                        <i class="fas fa-envelope mr-3"></i>
+                        Mesajlar
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="absolute bottom-0 w-64 p-6">
+                <button id="logoutBtn" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Çıkış Yap
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="glass-effect shadow-lg border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="fade-in">
+                        <h1 class="text-3xl font-bold gradient-text" id="pageTitle">Dashboard</h1>
+                        <p class="text-gray-600 mt-1" id="pageSubtitle">Genel bakış ve istatistikler</p>
+                    </div>
+                    <div class="flex items-center space-x-4 slide-in">
+                        <div class="relative">
+                            <button class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                <i class="fas fa-bell mr-2"></i>Bildirimler
+                                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center pulse-animation">3</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-white/50 rounded-xl p-2 hover:bg-white/80 transition-all duration-300">
+                            <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800" id="adminName">Admin</p>
+                                <p class="text-sm text-gray-600">Yönetici</p>
+                            </div>
+                        </div>
+                        <button id="logoutBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Çıkış
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Dashboard Content -->
+                <div id="dashboard-content" class="content-section">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in" style="animation-delay: 0.1s">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm font-medium">Bugünkü Randevular</p>
+                                    <p class="text-3xl font-bold text-blue-600" id="todayAppointments">0</p>
+                                    <p class="text-xs text-green-600 mt-1">
+                                        <i class="fas fa-arrow-up mr-1"></i>+12% dün
+                                    </p>
+                                </div>
+                                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-calendar-day text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in" style="animation-delay: 0.2s">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm font-medium">Bu Hafta</p>
+                                    <p class="text-3xl font-bold text-green-600" id="weekAppointments">0</p>
+                                    <p class="text-xs text-green-600 mt-1">
+                                        <i class="fas fa-arrow-up mr-1"></i>+8% geçen hafta
+                                    </p>
+                                </div>
+                                <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-calendar-week text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in" style="animation-delay: 0.3s">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm font-medium">Toplam Müşteri</p>
+                                    <p class="text-3xl font-bold text-purple-600" id="totalCustomers">0</p>
+                                    <p class="text-xs text-purple-600 mt-1">
+                                        <i class="fas fa-arrow-up mr-1"></i>+15% bu ay
+                                    </p>
+                                </div>
+                                <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-users text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in" style="animation-delay: 0.4s">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm font-medium">Aylık Gelir</p>
+                                    <p class="text-3xl font-bold text-orange-600" id="monthlyRevenue">₺0</p>
+                                    <p class="text-xs text-orange-600 mt-1">
+                                        <i class="fas fa-arrow-up mr-1"></i>+22% geçen ay
+                                    </p>
+                                </div>
+                                <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-lira-sign text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Aylık Randevu Trendi</h3>
+                            <canvas id="appointmentsChart" width="400" height="200"></canvas>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Hizmet Dağılımı</h3>
+                            <canvas id="servicesChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Appointments -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800">Son Randevular</h3>
+                            <a href="#" class="text-blue-600 hover:text-blue-800 transition-colors">Tümünü Gör</a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200">
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Müşteri</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Tarih</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Saat</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Hizmet</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Durum</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentAppointments">
+                                    <!-- Dinamik içerik -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Content Sections (Hidden by default) -->
+                <div id="appointments-content" class="content-section hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Randevu Yönetimi</h2>
+                    <p class="text-gray-600">Randevu yönetimi içeriği burada olacak...</p>
+                </div>
+
+                <div id="customers-content" class="content-section hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Müşteri Yönetimi</h2>
+                    <p class="text-gray-600">Müşteri yönetimi içeriği burada olacak...</p>
+                </div>
+
+                <div id="schedule-content" class="content-section hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Çalışma Saatleri</h2>
+                    <p class="text-gray-600">Çalışma saatleri yönetimi içeriği burada olacak...</p>
+                </div>
+
+                <div id="holidays-content" class="content-section hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Tatil Günleri</h2>
+                    <p class="text-gray-600">Tatil günleri yönetimi içeriği burada olacak...</p>
+                </div>
+
+                <div id="blog-content" class="content-section hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Blog Yönetimi</h2>
+                    <p class="text-gray-600">Blog yönetimi içeriği burada olacak...</p>
+                </div>
+
+                <div id="services-content" class="content-section hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Hizmet Yönetimi</h2>
+                    <p class="text-gray-600">Hizmet yönetimi içeriği burada olacak...</p>
+                </div>
+
+                <div id="messages-content" class="content-section hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Mesaj Yönetimi</h2>
+                    <p class="text-gray-600">Mesaj yönetimi içeriği burada olacak...</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let adminToken = localStorage.getItem('adminToken');
+        let adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+
+        // Check authentication
+        if (!adminToken) {
+            window.location.href = 'login.html';
+        }
+
+        // Update admin info
+        document.getElementById('adminName').textContent = adminUser.name || 'Admin';
+
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all items
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Get page name
+                const page = this.getAttribute('data-page');
+                
+                // Hide all content sections
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                // Show selected content
+                document.getElementById(page + '-content').classList.remove('hidden');
+                
+                // Update page title
+                const titles = {
+                    'dashboard': 'Dashboard',
+                    'appointments': 'Randevu Yönetimi',
+                    'customers': 'Müşteri Yönetimi',
+                    'schedule': 'Çalışma Saatleri',
+                    'holidays': 'Tatil Günleri',
+                    'blog': 'Blog Yönetimi',
+                    'services': 'Hizmet Yönetimi',
+                    'messages': 'Mesaj Yönetimi'
+                };
+                
+                document.getElementById('pageTitle').textContent = titles[page];
+                document.getElementById('pageSubtitle').textContent = getPageSubtitle(page);
+            });
+        });
+
+        function getPageSubtitle(page) {
+            const subtitles = {
+                'dashboard': 'Genel bakış ve istatistikler',
+                'appointments': 'Randevuları görüntüle ve yönet',
+                'customers': 'Müşteri bilgilerini yönet',
+                'schedule': 'Çalışma saatlerini belirle',
+                'holidays': 'Tatil günlerini ekle',
+                'blog': 'Blog yazılarını yönet',
+                'services': 'Hizmetleri ve fiyatları yönet',
+                'messages': 'Mesajları görüntüle ve yanıtla'
+            };
+            return subtitles[page];
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            window.location.href = 'login.html';
+        });
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('http://localhost:5001/api/admin/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateDashboardStats(data);
+                    updateCharts(data);
+                    updateRecentAppointments(data.recentAppointments);
+                }
+            } catch (error) {
+                console.error('Dashboard verileri yüklenirken hata:', error);
+            }
+        }
+
+        function updateDashboardStats(data) {
+            document.getElementById('todayAppointments').textContent = data.todayAppointments || 0;
+            document.getElementById('weekAppointments').textContent = data.weekAppointments || 0;
+            document.getElementById('totalCustomers').textContent = data.totalCustomers || 0;
+            document.getElementById('monthlyRevenue').textContent = `₺${data.monthlyRevenue || 0}`;
+        }
+
+        function updateCharts(data) {
+            // Appointments Chart
+            const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
+            new Chart(appointmentsCtx, {
+                type: 'line',
+                data: {
+                    labels: data.monthlyLabels || ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
+                    datasets: [{
+                        label: 'Randevular',
+                        data: data.monthlyData || [12, 19, 3, 5, 2, 3],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Services Chart
+            const servicesCtx = document.getElementById('servicesChart').getContext('2d');
+            new Chart(servicesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.serviceLabels || ['Bireysel Terapi', 'Çift Terapisi', 'Aile Terapisi'],
+                    datasets: [{
+                        data: data.serviceData || [30, 20, 15],
+                        backgroundColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function updateRecentAppointments(appointments) {
+            const tbody = document.getElementById('recentAppointments');
+            tbody.innerHTML = '';
+            
+            if (!appointments || appointments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">Henüz randevu bulunmuyor</td></tr>';
+                return;
+            }
+            
+            appointments.forEach(appointment => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-100 hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="py-3 px-4">${appointment.customerName}</td>
+                    <td class="py-3 px-4">${new Date(appointment.date).toLocaleDateString('tr-TR')}</td>
+                    <td class="py-3 px-4">${appointment.time}</td>
+                    <td class="py-3 px-4">${appointment.service}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(appointment.status)}">
+                            ${getStatusText(appointment.status)}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <button class="text-blue-600 hover:text-blue-800 mr-2" onclick="viewAppointment('${appointment._id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="text-green-600 hover:text-green-800 mr-2" onclick="approveAppointment('${appointment._id}')">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800" onclick="rejectAppointment('${appointment._id}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'approved': 'bg-green-100 text-green-800',
+                'rejected': 'bg-red-100 text-red-800',
+                'completed': 'bg-blue-100 text-blue-800',
+                'cancelled': 'bg-gray-100 text-gray-800'
+            };
+            return classes[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'pending': 'Beklemede',
+                'approved': 'Onaylandı',
+                'rejected': 'Reddedildi',
+                'completed': 'Tamamlandı',
+                'cancelled': 'İptal Edildi'
+            };
+            return texts[status] || 'Bilinmiyor';
+        }
+
+        // Appointment actions
+        function viewAppointment(id) {
+            console.log('Randevu görüntüle:', id);
+        }
+
+        function approveAppointment(id) {
+            console.log('Randevu onayla:', id);
+        }
+
+        function rejectAppointment(id) {
+            console.log('Randevu reddet:', id);
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+        });
+    </script>
+</body>
+</html>
