@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard - Psikolog Onur Uslu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800">Test Dashboard</h1>
+                <button onclick="testDashboard()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                    <i class="fas fa-play mr-2"></i>
+                    Test Et
+                </button>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="p-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Dashboard Test Sonuçları</h3>
+                
+                <div id="testResults" class="space-y-4">
+                    <div class="text-gray-600">Test başlatmak için "Test Et" butonuna tıklayın...</div>
+                </div>
+                
+                <!-- Test Elements -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-blue-100 rounded-lg">
+                                <i class="fas fa-calendar-day text-blue-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Bugünkü Randevular</p>
+                                <p class="text-3xl font-bold text-blue-600" id="todayAppointments">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-green-100 rounded-lg">
+                                <i class="fas fa-calendar-week text-green-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Haftalık Randevular</p>
+                                <p class="text-3xl font-bold text-green-600" id="weekAppointments">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-purple-50 p-6 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-purple-100 rounded-lg">
+                                <i class="fas fa-users text-purple-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Toplam Müşteri</p>
+                                <p class="text-3xl font-bold text-purple-600" id="totalCustomers">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-orange-50 p-6 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-orange-100 rounded-lg">
+                                <i class="fas fa-lira-sign text-orange-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Aylık Gelir</p>
+                                <p class="text-3xl font-bold text-orange-600" id="monthlyRevenue">₺0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts -->
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Haftalık Randevu Grafiği</h4>
+                        <div class="h-64">
+                            <canvas id="appointmentsChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Hizmet Dağılımı</h4>
+                        <div class="h-64">
+                            <canvas id="servicesChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Appointments Table -->
+                <div class="mt-8">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Son Randevular</h4>
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hasta</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saat</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hizmet</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentAppointments" class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td colspan="6" class="text-center py-8 text-gray-500">Henüz randevu bulunmuyor</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addTestResult(message, success = true) {
+            const results = document.getElementById('testResults');
+            const div = document.createElement('div');
+            div.className = `p-3 rounded-lg ${success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            div.innerHTML = `<i class="fas fa-${success ? 'check' : 'times'} mr-2"></i>${message}`;
+            results.appendChild(div);
+        }
+
+        function testDashboard() {
+            console.log('Dashboard testi başlatılıyor...');
+            document.getElementById('testResults').innerHTML = '';
+            
+            addTestResult('Dashboard testi başlatıldı');
+            
+            // Mock data
+            const mockData = {
+                todayAppointments: 5,
+                weekAppointments: 23,
+                totalCustomers: 127,
+                monthlyRevenue: 15750,
+                recentAppointments: [
+                    {
+                        id: 1,
+                        patientName: 'Ahmet Yılmaz',
+                        date: '2024-01-15',
+                        time: '14:00',
+                        status: 'confirmed',
+                        service: 'Bireysel Terapi'
+                    },
+                    {
+                        id: 2,
+                        patientName: 'Ayşe Demir',
+                        date: '2024-01-15',
+                        time: '15:30',
+                        status: 'pending',
+                        service: 'Çift Terapisi'
+                    },
+                    {
+                        id: 3,
+                        patientName: 'Mehmet Kaya',
+                        date: '2024-01-16',
+                        time: '10:00',
+                        status: 'confirmed',
+                        service: 'Aile Terapisi'
+                    }
+                ],
+                weeklyStats: [
+                    { day: 'Pzt', appointments: 8 },
+                    { day: 'Sal', appointments: 12 },
+                    { day: 'Çar', appointments: 6 },
+                    { day: 'Per', appointments: 15 },
+                    { day: 'Cum', appointments: 9 },
+                    { day: 'Cmt', appointments: 4 },
+                    { day: 'Paz', appointments: 2 }
+                ]
+            };
+            
+            try {
+                // Test updateDashboardStats
+                updateDashboardStats(mockData);
+                addTestResult('İstatistikler güncellendi');
+                
+                // Test updateCharts
+                updateCharts(mockData);
+                addTestResult('Grafikler güncellendi');
+                
+                // Test updateRecentAppointments
+                updateRecentAppointments(mockData.recentAppointments);
+                addTestResult('Son randevular güncellendi');
+                
+                addTestResult('Dashboard testi başarıyla tamamlandı!', true);
+                
+            } catch (error) {
+                addTestResult('Dashboard testi sırasında hata: ' + error.message, false);
+                console.error('Test hatası:', error);
+            }
+        }
+
+        function updateDashboardStats(data) {
+            try {
+                console.log('Dashboard istatistikleri güncelleniyor...');
+                
+                const todayAppointments = document.getElementById('todayAppointments');
+                const weekAppointments = document.getElementById('weekAppointments');
+                const totalCustomers = document.getElementById('totalCustomers');
+                const monthlyRevenue = document.getElementById('monthlyRevenue');
+                
+                if (todayAppointments) {
+                    todayAppointments.textContent = data.todayAppointments || 0;
+                }
+                
+                if (weekAppointments) {
+                    weekAppointments.textContent = data.weekAppointments || 0;
+                }
+                
+                if (totalCustomers) {
+                    totalCustomers.textContent = data.totalCustomers || 0;
+                }
+                
+                if (monthlyRevenue) {
+                    monthlyRevenue.textContent = `₺${data.monthlyRevenue || 0}`;
+                }
+                
+                console.log('Dashboard istatistikleri başarıyla güncellendi');
+            } catch (error) {
+                console.error('Dashboard istatistikleri güncellenirken hata:', error);
+                throw error;
+            }
+        }
+
+        function updateCharts(data) {
+            try {
+                console.log('Chartlar güncelleniyor...');
+                
+                // Appointments Chart
+                const appointmentsCanvas = document.getElementById('appointmentsChart');
+                if (appointmentsCanvas) {
+                    const appointmentsCtx = appointmentsCanvas.getContext('2d');
+                    new Chart(appointmentsCtx, {
+                        type: 'line',
+                        data: {
+                            labels: data.weeklyStats ? data.weeklyStats.map(item => item.day) : ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
+                            datasets: [{
+                                label: 'Randevular',
+                                data: data.weeklyStats ? data.weeklyStats.map(item => item.appointments) : [8, 12, 6, 15, 9, 4, 2],
+                                borderColor: 'rgb(59, 130, 246)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                }
+
+                // Services Chart
+                const servicesCanvas = document.getElementById('servicesChart');
+                if (servicesCanvas) {
+                    const servicesCtx = servicesCanvas.getContext('2d');
+                    new Chart(servicesCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Bireysel Terapi', 'Çift Terapisi', 'Aile Terapisi', 'Grup Terapisi'],
+                            datasets: [{
+                                data: [35, 25, 20, 15],
+                                backgroundColor: [
+                                    'rgb(59, 130, 246)',
+                                    'rgb(16, 185, 129)',
+                                    'rgb(245, 158, 11)',
+                                    'rgb(239, 68, 68)'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                }
+                
+                console.log('Chartlar başarıyla güncellendi');
+            } catch (error) {
+                console.error('Chart güncellenirken hata:', error);
+                throw error;
+            }
+        }
+
+        function updateRecentAppointments(appointments) {
+            try {
+                console.log('Son randevular güncelleniyor...');
+                
+                const tbody = document.getElementById('recentAppointments');
+                if (!tbody) {
+                    console.error('recentAppointments tablosu bulunamadı');
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                
+                if (!appointments || appointments.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">Henüz randevu bulunmuyor</td></tr>';
+                    return;
+                }
+                
+                appointments.forEach(appointment => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-100 hover:bg-gray-50';
+                    row.innerHTML = `
+                        <td class="py-3 px-4">${appointment.patientName || appointment.customerName || 'Bilinmeyen'}</td>
+                        <td class="py-3 px-4">${new Date(appointment.date).toLocaleDateString('tr-TR')}</td>
+                        <td class="py-3 px-4">${appointment.time}</td>
+                        <td class="py-3 px-4">${appointment.service}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(appointment.status)}">
+                                ${getStatusText(appointment.status)}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <button class="text-blue-600 hover:text-blue-800 mr-2" onclick="viewAppointment('${appointment.id || appointment._id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-800 mr-2" onclick="approveAppointment('${appointment.id || appointment._id}')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800" onclick="rejectAppointment('${appointment.id || appointment._id}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                console.log('Son randevular başarıyla güncellendi');
+            } catch (error) {
+                console.error('Son randevular güncellenirken hata:', error);
+                throw error;
+            }
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'approved': 'bg-green-100 text-green-800',
+                'confirmed': 'bg-green-100 text-green-800',
+                'rejected': 'bg-red-100 text-red-800',
+                'cancelled': 'bg-gray-100 text-gray-800'
+            };
+            return classes[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'pending': 'Beklemede',
+                'approved': 'Onaylandı',
+                'confirmed': 'Onaylandı',
+                'rejected': 'Reddedildi',
+                'cancelled': 'İptal Edildi'
+            };
+            return texts[status] || 'Bilinmeyen';
+        }
+
+        function viewAppointment(id) {
+            console.log('Randevu görüntüle:', id);
+        }
+
+        function approveAppointment(id) {
+            console.log('Randevu onayla:', id);
+        }
+
+        function rejectAppointment(id) {
+            console.log('Randevu reddet:', id);
+        }
+    </script>
+</body>
+</html>

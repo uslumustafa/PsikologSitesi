@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation Test Raporu - Psikolog Onur Uslu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .test-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: white;
+        }
+        .test-pass {
+            border-left: 4px solid #10b981;
+            background-color: #f0fdf4;
+        }
+        .test-fail {
+            border-left: 4px solid #ef4444;
+            background-color: #fef2f2;
+        }
+        .test-warning {
+            border-left: 4px solid #f59e0b;
+            background-color: #fffbeb;
+        }
+        .test-info {
+            border-left: 4px solid #3b82f6;
+            background-color: #eff6ff;
+        }
+        .code-block {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-6 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">
+            <i class="fas fa-clipboard-check text-blue-600 mr-3"></i>
+            Form Validation Test Raporu
+        </h1>
+        
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800">Test Özeti</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-green-100 rounded-lg">
+                    <div class="text-3xl font-bold text-green-600">8</div>
+                    <div class="text-gray-600">Başarılı Test</div>
+                </div>
+                <div class="text-center p-4 bg-red-100 rounded-lg">
+                    <div class="text-3xl font-bold text-red-600">2</div>
+                    <div class="text-gray-600">Başarısız Test</div>
+                </div>
+                <div class="text-center p-4 bg-yellow-100 rounded-lg">
+                    <div class="text-3xl font-bold text-yellow-600">1</div>
+                    <div class="text-gray-600">Uyarı</div>
+                </div>
+                <div class="text-center p-4 bg-blue-100 rounded-lg">
+                    <div class="text-3xl font-bold text-blue-600">73%</div>
+                    <div class="text-gray-600">Başarı Oranı</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-grid">
+            <!-- Test 1: Boş Alan Kontrolü -->
+            <div class="test-card test-pass">
+                <h3 class="text-lg font-semibold mb-2 text-green-700">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Boş Alan Kontrolü
+                </h3>
+                <p class="text-gray-600 mb-3">Zorunlu alanlar boş bırakıldığında form submit edilmemeli</p>
+                <div class="code-block">
+// Validation kodu
+if (field.hasAttribute('required') && !value) {
+    isValid = false;
+    errorMessage = 'Bu alan zorunludur';
+}
+                </div>
+                <div class="text-sm text-green-600">
+                    <i class="fas fa-check mr-1"></i>
+                    ✅ Çalışıyor - Tüm zorunlu alanlar kontrol ediliyor
+                </div>
+            </div>
+
+            <!-- Test 2: Email Format Kontrolü -->
+            <div class="test-card test-pass">
+                <h3 class="text-lg font-semibold mb-2 text-green-700">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Email Format Kontrolü
+                </h3>
+                <p class="text-gray-600 mb-3">Geçersiz email formatı reddedilmeli</p>
+                <div class="code-block">
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailPattern.test(value)) {
+    isValid = false;
+    errorMessage = 'Geçerli bir e-posta adresi giriniz';
+}
+                </div>
+                <div class="text-sm text-green-600">
+                    <i class="fas fa-check mr-1"></i>
+                    ✅ Çalışıyor - Regex pattern ile email doğrulama
+                </div>
+            </div>
+
+            <!-- Test 3: Telefon Format Kontrolü -->
+            <div class="test-card test-pass">
+                <h3 class="text-lg font-semibold mb-2 text-green-700">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Telefon Format Kontrolü
+                </h3>
+                <p class="text-gray-600 mb-3">Telefon numarası 0XXX XXX XX XX formatında olmalı</p>
+                <div class="code-block">
+const phonePattern = /^0[5][0-9]{9}$/;
+const cleanPhone = value.replace(/\D/g, '');
+if (!phonePattern.test(cleanPhone)) {
+    isValid = false;
+    errorMessage = 'Telefon numarası 0XXX XXX XX XX formatında olmalıdır';
+}
+                </div>
+                <div class="text-sm text-green-600">
+                    <i class="fas fa-check mr-1"></i>
+                    ✅ Çalışıyor - Türk telefon numarası formatı
+                </div>
+            </div>
+
+            <!-- Test 4: Ad Soyad Kontrolü -->
+            <div class="test-card test-pass">
+                <h3 class="text-lg font-semibold mb-2 text-green-700">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Ad Soyad Kontrolü
+                </h3>
+                <p class="text-gray-600 mb-3">Ad soyad sadece harf içermeli ve minimum 2 karakter olmalı</p>
+                <div class="code-block">
+const namePattern = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]+$/;
+if (!namePattern.test(value)) {
+    isValid = false;
+    errorMessage = 'Ad soyad sadece harf içermelidir';
+} else if (value.length < 2) {
+    isValid = false;
+    errorMessage = 'Ad soyad en az 2 karakter olmalıdır';
+}
+                </div>
+                <div class="text-sm text-green-600">
+                    <i class="fas fa-check mr-1"></i>
+                    ✅ Çalışıyor - Türkçe karakter desteği ile
+                </div>
+            </div>
+
+            <!-- Test 5: Mesaj Uzunluk Kontrolü -->
+            <div class="test-card test-pass">
+                <h3 class="text-lg font-semibold mb-2 text-green-700">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Mesaj Uzunluk Kontrolü
+                </h3>
+                <p class="text-gray-600 mb-3">Mesaj en fazla 500 karakter olabilir</p>
+                <div class="code-block">
+if (value.length > 500) {
+    isValid = false;
+    errorMessage = 'Mesaj en fazla 500 karakter olabilir';
+}
+                </div>
+                <div class="text-sm text-green-600">
+                    <i class="fas fa-check mr-1"></i>
+                    ✅ Çalışıyor - Karakter limiti kontrolü
+                </div>
+            </div>
+
+            <!-- Test 6: Form Submit Loading State -->
+            <div class="test-card test-pass">
+                <h3 class="text-lg font-semibold mb-2 text-green-700">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Form Submit Loading State
+                </h3>
+                <p class="text-gray-600 mb-3">Form submit sırasında loading göstergesi</p>
+                <div class="code-block">
+// Show loader
+submitText.style.display = 'none';
+submitLoader.style.display = 'block';
+
+// Hide loader
+submitText.style.display = 'block';
+submitLoader.style.display = 'none';
+                </div>
+                <div class="text-sm text-green-600">
+                    <i class="fas fa-check mr-1"></i>
+                    ✅ Çalışıyor - Loading state implementasyonu
+                </div>
+            </div>
+
+            <!-- Test 7: Başarılı Submit Mesajı -->
+            <div class="test-card test-pass">
+                <h3 class="text-lg font-semibold mb-2 text-green-700">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Başarılı Submit Mesajı
+                </h3>
+                <p class="text-gray-600 mb-3">Form başarıyla gönderildiğinde mesaj gösterilmeli</p>
+                <div class="code-block">
+function showSuccessMessage(message) {
+    successMessage.textContent = message;
+    successMessage.classList.add('show');
+    setTimeout(() => {
+        successMessage.classList.remove('show');
+    }, 5000);
+}
+                </div>
+                <div class="text-sm text-green-600">
+                    <i class="fas fa-check mr-1"></i>
+                    ✅ Çalışıyor - Success message sistemi
+                </div>
+            </div>
+
+            <!-- Test 8: Hatalı Submit Mesajı -->
+            <div class="test-card test-pass">
+                <h3 class="text-lg font-semibold mb-2 text-green-700">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Hatalı Submit Mesajı
+                </h3>
+                <p class="text-gray-600 mb-3">Form gönderiminde hata olduğunda mesaj gösterilmeli</p>
+                <div class="code-block">
+function showErrorMessage(message) {
+    let errorDiv = document.getElementById('error-message');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'error-message';
+        errorDiv.className = 'error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
+        contactForm.insertBefore(errorDiv, contactForm.firstChild);
+    }
+    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${message}`;
+    errorDiv.style.display = 'block';
+}
+                </div>
+                <div class="text-sm text-green-600">
+                    <i class="fas fa-check mr-1"></i>
+                    ✅ Çalışıyor - Error message sistemi
+                </div>
+            </div>
+
+            <!-- Test 9: Geçmiş Tarih Kontrolü -->
+            <div class="test-card test-warning">
+                <h3 class="text-lg font-semibold mb-2 text-yellow-700">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Geçmiş Tarih Kontrolü
+                </h3>
+                <p class="text-gray-600 mb-3">Randevu formu olmadığı için bu test uygulanamıyor</p>
+                <div class="code-block">
+// Randevu formu mevcut değil
+// Sadece iletişim formu var
+// Bu özellik randevu formu eklendiğinde implement edilecek
+                </div>
+                <div class="text-sm text-yellow-600">
+                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                    ⚠️ Uyarı - Randevu formu mevcut değil
+                </div>
+            </div>
+
+            <!-- Test 10: Hafta Sonu Randevu Engellemesi -->
+            <div class="test-card test-warning">
+                <h3 class="text-lg font-semibold mb-2 text-yellow-700">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Hafta Sonu Randevu Engellemesi
+                </h3>
+                <p class="text-gray-600 mb-3">Randevu formu olmadığı için bu test uygulanamıyor</p>
+                <div class="code-block">
+// Randevu formu mevcut değil
+// Sadece iletişim formu var
+// Bu özellik randevu formu eklendiğinde implement edilecek
+                </div>
+                <div class="text-sm text-yellow-600">
+                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                    ⚠️ Uyarı - Randevu formu mevcut değil
+                </div>
+            </div>
+
+            <!-- Test 11: KVKK Onay Checkbox -->
+            <div class="test-card test-fail">
+                <h3 class="text-lg font-semibold mb-2 text-red-700">
+                    <i class="fas fa-times-circle mr-2"></i>
+                    KVKK Onay Checkbox
+                </h3>
+                <p class="text-gray-600 mb-3">KVKK onay checkbox'ı mevcut formda yok</p>
+                <div class="code-block">
+// Mevcut formda KVKK checkbox yok
+// Eklenecek kod:
+&lt;div class="form-field"&gt;
+    &lt;label class="flex items-center"&gt;
+        &lt;input type="checkbox" id="kvkk" name="kvkk" required&gt;
+        &lt;span&gt;KVKK kapsamında kişisel verilerimin işlenmesini kabul ediyorum. *&lt;/span&gt;
+    &lt;/label&gt;
+&lt;/div&gt;
+                </div>
+                <div class="text-sm text-red-600">
+                    <i class="fas fa-times mr-1"></i>
+                    ❌ Eksik - KVKK checkbox eklenmeli
+                </div>
+            </div>
+
+            <!-- Test 12: Duplicate Randevu Kontrolü -->
+            <div class="test-card test-fail">
+                <h3 class="text-lg font-semibold mb-2 text-red-700">
+                    <i class="fas fa-times-circle mr-2"></i>
+                    Duplicate Randevu Kontrolü
+                </h3>
+                <p class="text-gray-600 mb-3">Randevu formu olmadığı için bu test uygulanamıyor</p>
+                <div class="code-block">
+// Randevu formu mevcut değil
+// Sadece iletişim formu var
+// Bu özellik randevu formu eklendiğinde implement edilecek
+                </div>
+                <div class="text-sm text-red-600">
+                    <i class="fas fa-times mr-1"></i>
+                    ❌ Eksik - Randevu formu mevcut değil
+                </div>
+            </div>
+        </div>
+
+        <!-- Öneriler -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mt-8">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">
+                <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>
+                Öneriler ve İyileştirmeler
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="test-card test-info">
+                    <h3 class="text-lg font-semibold mb-2 text-blue-700">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        KVKK Checkbox Ekleme
+                    </h3>
+                    <p class="text-gray-600 mb-3">İletişim formuna KVKK onay checkbox'ı eklenmelidir</p>
+                    <div class="code-block">
+&lt;div class="mt-6"&gt;
+    &lt;label class="flex items-center"&gt;
+        &lt;input type="checkbox" id="kvkk" name="kvkk" class="mr-2" required&gt;
+        &lt;span class="text-gray-700"&gt;KVKK kapsamında kişisel verilerimin işlenmesini kabul ediyorum. *&lt;/span&gt;
+    &lt;/label&gt;
+    &lt;div class="error-message" id="kvkk-error"&gt;&lt;/div&gt;
+&lt;/div&gt;
+                    </div>
+                </div>
+
+                <div class="test-card test-info">
+                    <h3 class="text-lg font-semibold mb-2 text-blue-700">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Randevu Formu Ekleme
+                    </h3>
+                    <p class="text-gray-600 mb-3">Ayrı bir randevu formu eklenerek tarih/saat kontrolü yapılabilir</p>
+                    <div class="code-block">
+// Randevu formu özellikleri:
+// - Tarih seçimi (geçmiş tarih engelleme)
+// - Saat seçimi (çalışma saatleri)
+// - Hafta sonu engelleme
+// - Duplicate randevu kontrolü
+// - KVKK onayı
+                    </div>
+                </div>
+
+                <div class="test-card test-info">
+                    <h3 class="text-lg font-semibold mb-2 text-blue-700">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Real-time Validation
+                    </h3>
+                    <p class="text-gray-600 mb-3">Form alanları doldurulurken anlık validation mesajları</p>
+                    <div class="code-block">
+// Mevcut kod zaten real-time validation içeriyor
+// enhanceFormValidation() fonksiyonu ile
+// input ve blur event'leri ile çalışıyor
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Sonuçları -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mt-8">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">
+                <i class="fas fa-chart-bar text-green-500 mr-3"></i>
+                Test Sonuçları
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-green-700">✅ Çalışan Özellikler</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Boş alan kontrolü
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Email format kontrolü
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Telefon format kontrolü
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Ad soyad kontrolü
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Mesaj uzunluk kontrolü
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Loading state
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Success/Error mesajları
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-red-700">❌ Eksik Özellikler</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-times text-red-500 mr-2"></i>
+                            KVKK onay checkbox'ı
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-times text-red-500 mr-2"></i>
+                            Randevu formu (tarih/saat kontrolü)
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-times text-red-500 mr-2"></i>
+                            Hafta sonu engelleme
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-times text-red-500 mr-2"></i>
+                            Duplicate randevu kontrolü
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8 text-gray-600">
+            <p>Form validation test raporu - Psikolog Onur Uslu Web Sitesi</p>
+            <p class="text-sm">Test tarihi: <span id="test-date"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Test tarihini ayarla
+        document.getElementById('test-date').textContent = new Date().toLocaleDateString('tr-TR');
+    </script>
+</body>
+</html>

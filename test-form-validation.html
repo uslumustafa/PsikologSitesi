@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation Test - Psikolog Onur Uslu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        .test-pass {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .test-fail {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .test-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        .form-field {
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            display: none;
+        }
+        .success-message {
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        .loading {
+            display: none;
+        }
+        .loading.show {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">Form Validation Test Suite</h1>
+        
+        <!-- Test Results -->
+        <div id="test-results" class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Test Sonuçları</h2>
+            <div id="test-summary" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="text-2xl font-bold text-green-600" id="pass-count">0</div>
+                    <div class="text-gray-600">Başarılı</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="text-2xl font-bold text-red-600" id="fail-count">0</div>
+                    <div class="text-gray-600">Başarısız</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="text-2xl font-bold text-yellow-600" id="warning-count">0</div>
+                    <div class="text-gray-600">Uyarı</div>
+                </div>
+            </div>
+            <div id="test-details"></div>
+        </div>
+
+        <!-- Test Form -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-2xl font-semibold mb-6">Test Formu</h2>
+            
+            <form id="test-form">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="form-field">
+                        <label for="name" class="block text-gray-700 font-semibold mb-2">Ad Soyad *</label>
+                        <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <div class="error-message" id="name-error"></div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="email" class="block text-gray-700 font-semibold mb-2">E-posta Adresi *</label>
+                        <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <div class="error-message" id="email-error"></div>
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="phone" class="block text-gray-700 font-semibold mb-2">Telefon Numarası *</label>
+                    <input type="tel" id="phone" name="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0XXX XXX XX XX" required>
+                    <div class="error-message" id="phone-error"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="appointment-date" class="block text-gray-700 font-semibold mb-2">Randevu Tarihi *</label>
+                    <input type="date" id="appointment-date" name="appointment-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <div class="error-message" id="date-error"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="appointment-time" class="block text-gray-700 font-semibold mb-2">Randevu Saati *</label>
+                    <select id="appointment-time" name="appointment-time" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">Saat seçin</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                    </select>
+                    <div class="error-message" id="time-error"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="service" class="block text-gray-700 font-semibold mb-2">Hizmet Türü *</label>
+                    <select id="service" name="service" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">Hizmet seçin</option>
+                        <option value="individual">Bireysel Terapi</option>
+                        <option value="couple">Çift Terapisi</option>
+                        <option value="family">Aile Terapisi</option>
+                        <option value="online">Online Terapi</option>
+                    </select>
+                    <div class="error-message" id="service-error"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="message" class="block text-gray-700 font-semibold mb-2">Mesajınız</label>
+                    <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Randevu hakkında ek bilgiler..."></textarea>
+                    <div class="error-message" id="message-error"></div>
+                </div>
+                
+                <div class="form-field">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="kvkk" name="kvkk" class="mr-2" required>
+                        <span class="text-gray-700">KVKK kapsamında kişisel verilerimin işlenmesini kabul ediyorum. *</span>
+                    </label>
+                    <div class="error-message" id="kvkk-error"></div>
+                </div>
+                
+                <div class="text-center mt-8">
+                    <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors">
+                        <span id="submit-text">Test Et</span>
+                        <div id="submit-loader" class="loading">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Test ediliyor...
+                        </div>
+                    </button>
+                </div>
+            </form>
+            
+            <div id="success-message" class="success-message">
+                <i class="fas fa-check-circle mr-2"></i>
+                Form başarıyla test edildi!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test sonuçları
+        let testResults = {
+            pass: 0,
+            fail: 0,
+            warning: 0,
+            details: []
+        };
+
+        // Form validation rules
+        const validationRules = {
+            name: {
+                required: true,
+                minLength: 2,
+                maxLength: 50,
+                pattern: /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]+$/,
+                message: 'Ad soyad en az 2, en fazla 50 karakter olmalı ve sadece harf içermelidir'
+            },
+            email: {
+                required: true,
+                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Geçerli bir e-posta adresi giriniz'
+            },
+            phone: {
+                required: true,
+                pattern: /^0[5][0-9]{9}$/,
+                message: 'Telefon numarası 0XXX XXX XX XX formatında olmalıdır'
+            },
+            'appointment-date': {
+                required: true,
+                futureDate: true,
+                noWeekend: true,
+                message: 'Randevu tarihi gelecekte olmalı ve hafta sonu olamaz'
+            },
+            'appointment-time': {
+                required: true,
+                message: 'Randevu saati seçilmelidir'
+            },
+            service: {
+                required: true,
+                message: 'Hizmet türü seçilmelidir'
+            },
+            message: {
+                maxLength: 500,
+                message: 'Mesaj en fazla 500 karakter olabilir'
+            },
+            kvkk: {
+                required: true,
+                message: 'KVKK onayı zorunludur'
+            }
+        };
+
+        // Test cases
+        const testCases = [
+            {
+                name: 'Boş Alan Kontrolü',
+                test: () => {
+                    const requiredFields = ['name', 'email', 'phone', 'appointment-date', 'appointment-time', 'service', 'kvkk'];
+                    let allEmpty = true;
+                    
+                    requiredFields.forEach(fieldName => {
+                        const field = document.getElementById(fieldName);
+                        if (field.type === 'checkbox') {
+                            if (field.checked) allEmpty = false;
+                        } else {
+                            if (field.value.trim()) allEmpty = false;
+                        }
+                    });
+                    
+                    return allEmpty;
+                },
+                expected: true,
+                description: 'Tüm zorunlu alanlar boş olduğunda form submit edilmemeli'
+            },
+            {
+                name: 'Email Format Kontrolü',
+                test: () => {
+                    const emailField = document.getElementById('email');
+                    const emailValue = emailField.value.trim();
+                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
+                },
+                expected: false,
+                description: 'Geçersiz email formatı reddedilmeli',
+                setup: () => {
+                    document.getElementById('email').value = 'invalid-email';
+                }
+            },
+            {
+                name: 'Telefon Format Kontrolü',
+                test: () => {
+                    const phoneField = document.getElementById('phone');
+                    const phoneValue = phoneField.value.replace(/\D/g, '');
+                    return /^0[5][0-9]{9}$/.test(phoneValue);
+                },
+                expected: false,
+                description: 'Geçersiz telefon formatı reddedilmeli',
+                setup: () => {
+                    document.getElementById('phone').value = '123456789';
+                }
+            },
+            {
+                name: 'Geçmiş Tarih Kontrolü',
+                test: () => {
+                    const dateField = document.getElementById('appointment-date');
+                    const selectedDate = new Date(dateField.value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    return selectedDate < today;
+                },
+                expected: false,
+                description: 'Geçmiş tarih seçilememeli',
+                setup: () => {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    document.getElementById('appointment-date').value = yesterday.toISOString().split('T')[0];
+                }
+            },
+            {
+                name: 'Hafta Sonu Kontrolü',
+                test: () => {
+                    const dateField = document.getElementById('appointment-date');
+                    const selectedDate = new Date(dateField.value);
+                    const dayOfWeek = selectedDate.getDay();
+                    return dayOfWeek === 0 || dayOfWeek === 6; // Pazar = 0, Cumartesi = 6
+                },
+                expected: false,
+                description: 'Hafta sonu randevu alınamamalı',
+                setup: () => {
+                    const nextSaturday = new Date();
+                    nextSaturday.setDate(nextSaturday.getDate() + (6 - nextSaturday.getDay()));
+                    document.getElementById('appointment-date').value = nextSaturday.toISOString().split('T')[0];
+                }
+            },
+            {
+                name: 'KVKK Onay Kontrolü',
+                test: () => {
+                    const kvkkField = document.getElementById('kvkk');
+                    return kvkkField.checked;
+                },
+                expected: false,
+                description: 'KVKK onayı olmadan form submit edilmemeli',
+                setup: () => {
+                    document.getElementById('kvkk').checked = false;
+                }
+            },
+            {
+                name: 'Form Submit Loading State',
+                test: () => {
+                    return document.getElementById('submit-loader').classList.contains('show');
+                },
+                expected: true,
+                description: 'Form submit sırasında loading state gösterilmeli',
+                setup: () => {
+                    // Bu test form submit sırasında çalışacak
+                }
+            },
+            {
+                name: 'Duplicate Randevu Kontrolü',
+                test: () => {
+                    // Bu test için mock data kullanıyoruz
+                    const existingAppointments = [
+                        { email: 'test@example.com', date: '2024-12-25', time: '14:00' },
+                        { email: 'test@example.com', date: '2024-12-25', time: '15:00' }
+                    ];
+                    
+                    const formEmail = document.getElementById('email').value;
+                    const formDate = document.getElementById('appointment-date').value;
+                    const formTime = document.getElementById('appointment-time').value;
+                    
+                    return existingAppointments.some(apt => 
+                        apt.email === formEmail && 
+                        apt.date === formDate && 
+                        apt.time === formTime
+                    );
+                },
+                expected: false,
+                description: 'Aynı email/telefon aynı saatte duplicate randevu alınamamalı',
+                setup: () => {
+                    document.getElementById('email').value = 'test@example.com';
+                    document.getElementById('appointment-date').value = '2024-12-25';
+                    document.getElementById('appointment-time').value = '14:00';
+                }
+            }
+        ];
+
+        // Test runner
+        function runTests() {
+            console.log('🧪 Form validation testleri başlatılıyor...');
+            
+            testResults = { pass: 0, fail: 0, warning: 0, details: [] };
+            
+            testCases.forEach((testCase, index) => {
+                try {
+                    // Setup if needed
+                    if (testCase.setup) {
+                        testCase.setup();
+                    }
+                    
+                    // Run test
+                    const result = testCase.test();
+                    const passed = result === testCase.expected;
+                    
+                    if (passed) {
+                        testResults.pass++;
+                        addTestResult(`✅ ${testCase.name}`, 'pass', testCase.description);
+                    } else {
+                        testResults.fail++;
+                        addTestResult(`❌ ${testCase.name}`, 'fail', testCase.description);
+                    }
+                    
+                } catch (error) {
+                    testResults.fail++;
+                    addTestResult(`❌ ${testCase.name}`, 'fail', `Hata: ${error.message}`);
+                }
+            });
+            
+            updateTestSummary();
+        }
+
+        // Add test result
+        function addTestResult(title, type, description) {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result test-${type}`;
+            resultDiv.innerHTML = `
+                <div class="font-semibold">${title}</div>
+                <div class="text-sm">${description}</div>
+            `;
+            document.getElementById('test-details').appendChild(resultDiv);
+        }
+
+        // Update test summary
+        function updateTestSummary() {
+            document.getElementById('pass-count').textContent = testResults.pass;
+            document.getElementById('fail-count').textContent = testResults.fail;
+            document.getElementById('warning-count').textContent = testResults.warning;
+        }
+
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            const errors = {};
+
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+
+            // Validate each field
+            Object.keys(validationRules).forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                const rule = validationRules[fieldName];
+                const value = field.type === 'checkbox' ? field.checked : field.value.trim();
+
+                // Required check
+                if (rule.required && !value) {
+                    errors[fieldName] = `${fieldName} alanı zorunludur`;
+                    isValid = false;
+                }
+
+                // Pattern check
+                if (value && rule.pattern && !rule.pattern.test(value)) {
+                    errors[fieldName] = rule.message;
+                    isValid = false;
+                }
+
+                // Min length check
+                if (value && rule.minLength && value.length < rule.minLength) {
+                    errors[fieldName] = rule.message;
+                    isValid = false;
+                }
+
+                // Max length check
+                if (value && rule.maxLength && value.length > rule.maxLength) {
+                    errors[fieldName] = rule.message;
+                    isValid = false;
+                }
+
+                // Future date check
+                if (fieldName === 'appointment-date' && value) {
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    if (selectedDate < today) {
+                        errors[fieldName] = 'Randevu tarihi gelecekte olmalıdır';
+                        isValid = false;
+                    }
+                }
+
+                // Weekend check
+                if (fieldName === 'appointment-date' && value) {
+                    const selectedDate = new Date(value);
+                    const dayOfWeek = selectedDate.getDay();
+                    
+                    if (dayOfWeek === 0 || dayOfWeek === 6) {
+                        errors[fieldName] = 'Hafta sonu randevu alınamaz';
+                        isValid = false;
+                    }
+                }
+            });
+
+            // Show errors
+            Object.keys(errors).forEach(fieldName => {
+                const errorElement = document.getElementById(`${fieldName}-error`);
+                if (errorElement) {
+                    errorElement.textContent = errors[fieldName];
+                    errorElement.style.display = 'block';
+                }
+            });
+
+            return isValid;
+        }
+
+        // Form submit handler
+        document.getElementById('test-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Clear previous results
+            document.getElementById('test-details').innerHTML = '';
+            
+            // Show loading
+            document.getElementById('submit-text').style.display = 'none';
+            document.getElementById('submit-loader').classList.add('show');
+            
+            // Validate form
+            const isValid = validateForm();
+            
+            if (isValid) {
+                // Simulate form submission
+                setTimeout(() => {
+                    // Hide loading
+                    document.getElementById('submit-text').style.display = 'block';
+                    document.getElementById('submit-loader').classList.remove('show');
+                    
+                    // Show success message
+                    document.getElementById('success-message').style.display = 'block';
+                    
+                    // Run tests
+                    runTests();
+                    
+                    // Hide success message after 3 seconds
+                    setTimeout(() => {
+                        document.getElementById('success-message').style.display = 'none';
+                    }, 3000);
+                    
+                }, 2000);
+            } else {
+                // Hide loading
+                document.getElementById('submit-text').style.display = 'block';
+                document.getElementById('submit-loader').classList.remove('show');
+                
+                // Run tests anyway
+                runTests();
+            }
+        });
+
+        // Real-time validation
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('blur', function() {
+                validateForm();
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointment-date').setAttribute('min', today);
+            
+            console.log('Form validation test sayfası yüklendi');
+        });
+    </script>
+</body>
+</html>

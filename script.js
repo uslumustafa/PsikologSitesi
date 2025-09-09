@@ -10,6 +10,112 @@ const successMessage = document.getElementById('success-message');
 const reveals = document.querySelectorAll('.section-fade-in');
 const testimonials = document.querySelectorAll('.testimonial-slide');
 
+// ===== ADMIN SETTINGS INTEGRATION =====
+function loadAdminSettings() {
+    try {
+        // Admin panelinden kaydedilen ayarları oku
+        const adminSettings = localStorage.getItem('adminSettings');
+        if (adminSettings) {
+            const settings = JSON.parse(adminSettings);
+            applySettings(settings);
+        }
+    } catch (error) {
+        console.log('Admin ayarları yüklenemedi:', error);
+    }
+}
+
+function applySettings(settings) {
+    // Site başlığını güncelle
+    if (settings.siteTitle) {
+        document.title = settings.siteTitle;
+        const titleMeta = document.querySelector('meta[name="title"]');
+        if (titleMeta) titleMeta.content = settings.siteTitle;
+    }
+    
+    // Site açıklamasını güncelle
+    if (settings.siteDescription) {
+        const descMeta = document.querySelector('meta[name="description"]');
+        if (descMeta) descMeta.content = settings.siteDescription;
+    }
+    
+    // Telefon numarasını güncelle
+    if (settings.phone) {
+        const phoneElements = document.querySelectorAll('[data-phone]');
+        phoneElements.forEach(el => el.textContent = settings.phone);
+    }
+    
+    // E-posta adresini güncelle
+    if (settings.email) {
+        const emailElements = document.querySelectorAll('[data-email]');
+        emailElements.forEach(el => el.textContent = settings.email);
+    }
+    
+    // Adres bilgisini güncelle
+    if (settings.address) {
+        const addressElements = document.querySelectorAll('[data-address]');
+        addressElements.forEach(el => el.textContent = settings.address);
+    }
+    
+    // Hakkımda bölümünü güncelle
+    if (settings.aboutTitle) {
+        const aboutTitle = document.querySelector('[data-about-title]');
+        if (aboutTitle) aboutTitle.textContent = settings.aboutTitle;
+    }
+    
+    if (settings.aboutDescription) {
+        const aboutDesc = document.querySelector('[data-about-description]');
+        if (aboutDesc) aboutDesc.textContent = settings.aboutDescription;
+    }
+    
+    // İstatistikleri güncelle
+    if (settings.experienceYears) {
+        const expElements = document.querySelectorAll('[data-experience]');
+        expElements.forEach(el => el.textContent = settings.experienceYears);
+    }
+    
+    if (settings.totalClients) {
+        const clientElements = document.querySelectorAll('[data-clients]');
+        clientElements.forEach(el => el.textContent = settings.totalClients);
+    }
+    
+    if (settings.successRate) {
+        const successElements = document.querySelectorAll('[data-success-rate]');
+        successElements.forEach(el => el.textContent = settings.successRate);
+    }
+    
+    // Hizmetleri güncelle
+    if (settings.services && Array.isArray(settings.services)) {
+        const servicesContainer = document.querySelector('[data-services]');
+        if (servicesContainer) {
+            servicesContainer.innerHTML = settings.services.map(service => 
+                `<li class="flex items-center mb-3">
+                    <i class="fas fa-check-circle text-indigo-600 mr-3"></i>
+                    <span class="text-gray-700">${service}</span>
+                </li>`
+            ).join('');
+        }
+    }
+    
+    // Profil fotoğraflarını güncelle
+    if (settings.mainPhoto) {
+        const mainPhotoElements = document.querySelectorAll('[data-main-photo]');
+        mainPhotoElements.forEach(el => {
+            el.src = `images/${settings.mainPhoto}`;
+            el.alt = 'Psikolog Onur Uslu';
+        });
+    }
+    
+    if (settings.officePhoto) {
+        const officePhotoElements = document.querySelectorAll('[data-office-photo]');
+        officePhotoElements.forEach(el => {
+            el.src = `images/${settings.officePhoto}`;
+            el.alt = 'Ofis Ortamı';
+        });
+    }
+    
+    console.log('Admin ayarları uygulandı!');
+}
+
 // ===== HEADER SCROLL EFFECT =====
 window.addEventListener('scroll', function() {
     if (window.scrollY > 50) {
@@ -115,6 +221,22 @@ if (contactForm) {
     contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        // Validate form before submission
+        const inputs = this.querySelectorAll('input[required], textarea[required]');
+        let isFormValid = true;
+        
+        inputs.forEach(input => {
+            if (!validateField(input)) {
+                isFormValid = false;
+            }
+        });
+        
+        if (!isFormValid) {
+            // Show error message
+            showErrorMessage('Lütfen tüm zorunlu alanları doğru şekilde doldurun.');
+            return;
+        }
+        
         // Show loader
         submitText.style.display = 'none';
         submitLoader.style.display = 'block';
@@ -125,19 +247,20 @@ if (contactForm) {
             name: formData.get('name'),
             email: formData.get('email'),
             phone: formData.get('phone'),
+            subject: formData.get('subject'),
             message: formData.get('message')
         };
         
         try {
             // ===== BACKEND INTEGRATION =====
             // Option 1: Formspree
-            // const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(data)
-            // });
+            const response = await fetch('https://formspree.io/f/mnnvrqop', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
             
             // Option 2: Your custom backend
             // const response = await fetch('/api/contact', {
@@ -148,27 +271,60 @@ if (contactForm) {
             //     body: JSON.stringify(data)
             // });
             
-            // For demo purposes - simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Show success message
-            successMessage.classList.add('show');
-            contactForm.reset();
-            
-            // Hide success message after 5 seconds
-            setTimeout(() => {
-                successMessage.classList.remove('show');
-            }, 5000);
+            if (response.ok) {
+                // Show success message
+                showSuccessMessage('Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağım.');
+                contactForm.reset();
+                
+                // Clear validation states
+                inputs.forEach(input => {
+                    input.classList.remove('border-red-500', 'border-green-500');
+                    const error = input.parentElement.querySelector('.field-error');
+                    if (error) error.remove();
+                });
+            } else {
+                throw new Error('Form submission failed');
+            }
             
         } catch (error) {
             console.error('Form submission error:', error);
-            alert('Bir hata oluştu. Lütfen tekrar deneyin veya WhatsApp üzerinden iletişime geçin.');
+            showErrorMessage('Bir hata oluştu. Lütfen tekrar deneyin veya WhatsApp üzerinden iletişime geçin.');
         } finally {
             // Hide loader
             submitText.style.display = 'block';
             submitLoader.style.display = 'none';
         }
     });
+}
+
+// ===== MESSAGE DISPLAY FUNCTIONS =====
+function showSuccessMessage(message) {
+    successMessage.textContent = message;
+    successMessage.classList.add('show');
+    
+    // Hide success message after 5 seconds
+    setTimeout(() => {
+        successMessage.classList.remove('show');
+    }, 5000);
+}
+
+function showErrorMessage(message) {
+    // Create or update error message
+    let errorDiv = document.getElementById('error-message');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'error-message';
+        errorDiv.className = 'error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
+        contactForm.insertBefore(errorDiv, contactForm.firstChild);
+    }
+    
+    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${message}`;
+    errorDiv.style.display = 'block';
+    
+    // Hide error message after 5 seconds
+    setTimeout(() => {
+        errorDiv.style.display = 'none';
+    }, 5000);
 }
 
 // ===== TYPING ANIMATION =====
@@ -438,20 +594,67 @@ function validateField(field) {
     const value = field.value.trim();
     const type = field.type;
     let isValid = true;
+    let errorMessage = '';
     
-    // Remove existing validation classes
+    // Remove existing validation classes and error messages
     field.classList.remove('border-red-500', 'border-green-500');
-    
-    if (field.hasAttribute('required') && !value) {
-        isValid = false;
-    } else if (type === 'email' && value) {
-        isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    } else if (type === 'tel' && value) {
-        isValid = /^[\d\s\-\+\(\)]+$/.test(value) && value.replace(/\D/g, '').length >= 10;
+    const existingError = field.parentElement.querySelector('.field-error');
+    if (existingError) {
+        existingError.remove();
     }
     
+    // Required field check
+    if (field.hasAttribute('required') && !value) {
+        isValid = false;
+        errorMessage = 'Bu alan zorunludur';
+    } 
+    // Email validation
+    else if (type === 'email' && value) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(value)) {
+            isValid = false;
+            errorMessage = 'Geçerli bir e-posta adresi giriniz';
+        }
+    } 
+    // Phone validation
+    else if (type === 'tel' && value) {
+        const phonePattern = /^0[5][0-9]{9}$/;
+        const cleanPhone = value.replace(/\D/g, '');
+        if (!phonePattern.test(cleanPhone)) {
+            isValid = false;
+            errorMessage = 'Telefon numarası 0XXX XXX XX XX formatında olmalıdır';
+        }
+    }
+    // Name validation
+    else if (field.name === 'name' && value) {
+        const namePattern = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]+$/;
+        if (!namePattern.test(value)) {
+            isValid = false;
+            errorMessage = 'Ad soyad sadece harf içermelidir';
+        } else if (value.length < 2) {
+            isValid = false;
+            errorMessage = 'Ad soyad en az 2 karakter olmalıdır';
+        }
+    }
+    // Message validation
+    else if (field.name === 'message' && value) {
+        if (value.length > 500) {
+            isValid = false;
+            errorMessage = 'Mesaj en fazla 500 karakter olabilir';
+        }
+    }
+    
+    // Apply validation styling
     if (value) {
         field.classList.add(isValid ? 'border-green-500' : 'border-red-500');
+        
+        // Show error message
+        if (!isValid && errorMessage) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'field-error text-red-500 text-sm mt-1';
+            errorDiv.textContent = errorMessage;
+            field.parentElement.appendChild(errorDiv);
+        }
     }
     
     return isValid;
@@ -462,7 +665,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Create scroll to top button
     createScrollToTopButton();
     
-    // Enhance form validation
+    // Initialize form validation
     enhanceFormValidation();
     
     // Observe elements for counter animation
@@ -470,4 +673,33 @@ document.addEventListener('DOMContentLoaded', function() {
     if (counterSection) {
         observer.observe(counterSection);
     }
+});
+
+// ===== SCROLL TO TOP FUNCTIONALITY =====
+const scrollToTopBtn = document.getElementById('scroll-to-top');
+
+// Show/hide scroll to top button based on scroll position
+window.addEventListener('scroll', function() {
+    if (window.scrollY > 300) {
+        scrollToTopBtn.classList.add('show');
+    } else {
+        scrollToTopBtn.classList.remove('show');
+    }
+});
+
+// Scroll to top when button is clicked
+scrollToTopBtn.addEventListener('click', function() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
+// ===== PAGE LOAD =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Admin ayarlarını yükle
+    loadAdminSettings();
+    
+    // Her 5 saniyede bir admin ayarlarını kontrol et
+    setInterval(loadAdminSettings, 5000);
 });

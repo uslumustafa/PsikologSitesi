@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Yönetimi - Psikolog Onur Uslu Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .nav-item {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: inset 4px 0 0 #FFFFFF;
+        }
+        .blog-card {
+            transition: all 0.3s ease;
+        }
+        .blog-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .ql-editor {
+            min-height: 200px;
+        }
+        .image-upload-area {
+            border: 2px dashed #d1d5db;
+            transition: all 0.3s ease;
+        }
+        .image-upload-area:hover {
+            border-color: #6366f1;
+            background-color: #f8fafc;
+        }
+        .image-upload-area.dragover {
+            border-color: #6366f1;
+            background-color: #eef2ff;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-6">
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-brain text-indigo-600 text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold">Admin Panel</h1>
+            </div>
+            
+            <nav class="space-y-2">
+                <a href="dashboard.html" class="nav-item flex items-center px-4 py-3 rounded-lg">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="blog-management.html" class="nav-item active flex items-center px-4 py-3 rounded-lg">
+                    <i class="fas fa-blog mr-3"></i>
+                    Blog Yönetimi
+                </a>
+                <a href="appointments.html" class="nav-item flex items-center px-4 py-3 rounded-lg">
+                    <i class="fas fa-calendar-alt mr-3"></i>
+                    Randevular
+                </a>
+                <a href="site-settings.html" class="nav-item flex items-center px-4 py-3 rounded-lg">
+                    <i class="fas fa-cog mr-3"></i>
+                    Site Ayarları
+                </a>
+                <a href="../index.html" class="nav-item flex items-center px-4 py-3 rounded-lg">
+                    <i class="fas fa-external-link-alt mr-3"></i>
+                    Siteyi Görüntüle
+                </a>
+                <button onclick="logout()" class="nav-item w-full text-left flex items-center px-4 py-3 rounded-lg hover:bg-red-500/20">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    Çıkış Yap
+                </button>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Blog Yönetimi</h2>
+                    <div class="flex space-x-3">
+                        <button onclick="openBlogModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>
+                            Yeni Blog Yazısı
+                        </button>
+                        <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            Çıkış Yap
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="p-6">
+                <!-- Blog List -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Blog Card 1 -->
+                    <div class="blog-card bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="../images/anxiety-coping-techniques.jpg" alt="Kaygı Teknikleri" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Kaygıyla Başa Çıkmanın 5 Pratik Yolu</h3>
+                            <p class="text-gray-600 mb-4">Günlük hayatta anksiyete ile başa çıkmanıza yardımcı olacak basit ve etkili teknikler...</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">2 gün önce</span>
+                                <div class="space-x-2">
+                                    <button onclick="editBlog(1)" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteBlog(1)" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blog Card 2 -->
+                    <div class="blog-card bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="../images/cognitive-behavioral-therapy.jpg" alt="BDT Terapi" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Bilişsel Davranışçı Terapi (BDT)</h3>
+                            <p class="text-gray-600 mb-4">Zihinsel esenliğe giden bilimsel yolculuk hakkında detaylı bilgiler...</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">1 hafta önce</span>
+                                <div class="space-x-2">
+                                    <button onclick="editBlog(2)" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteBlog(2)" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blog Card 3 -->
+                    <div class="blog-card bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="../images/schema-therapy.jpg" alt="Şema Terapi" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Şema Terapi Nedir?</h3>
+                            <p class="text-gray-600 mb-4">Hayatınızda tekrar eden olumsuz kalıpların kökenlerini anlamak...</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">2 hafta önce</span>
+                                <div class="space-x-2">
+                                    <button onclick="editBlog(3)" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteBlog(3)" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Modal -->
+    <div id="blogModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-800" id="modalTitle">Yeni Blog Yazısı</h3>
+                        <button onclick="closeBlogModal()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <form id="blogForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Başlık</label>
+                                <input type="text" id="blogTitle" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Blog yazısı başlığı">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                                <select id="blogCategory" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="terapi">Terapi</option>
+                                    <option value="kaygi">Kaygı</option>
+                                    <option value="depresyon">Depresyon</option>
+                                    <option value="cift-terapisi">Çift Terapisi</option>
+                                    <option value="genel">Genel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Özet</label>
+                            <textarea id="blogSummary" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Blog yazısı özeti"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">İçerik</label>
+                            <div id="blogContent" class="border border-gray-300 rounded-lg"></div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Kapak Fotoğrafı</label>
+                            <div class="image-upload-area rounded-lg p-8 text-center" onclick="document.getElementById('imageInput').click()">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-600">Fotoğraf yüklemek için tıklayın veya sürükleyin</p>
+                                <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                            </div>
+                            <div id="imagePreview" class="mt-4 hidden">
+                                <img id="previewImg" class="w-32 h-32 object-cover rounded-lg">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" onclick="closeBlogModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                İptal
+                            </button>
+                            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let quill;
+        let currentBlogId = null;
+
+        // Giriş kontrolü
+        function checkAuth() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Çıkış yapma
+        function logout() {
+            if (confirm('Psikolog Onur Uslu sayfasından çıkmak istediğinize emin misiniz?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                localStorage.removeItem('adminSettings');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Düzenleme seçeneklerini aktif et
+        function enableEditOptions() {
+            console.log('Blog düzenleme seçenekleri aktif ediliyor...');
+            
+            // Tüm düzenleme butonlarını aktif et
+            const editButtons = document.querySelectorAll('[onclick*="edit"], [onclick*="delete"], [onclick*="openBlogModal"]');
+            editButtons.forEach(button => {
+                button.disabled = false;
+                button.classList.remove('opacity-50', 'cursor-not-allowed');
+                button.classList.add('cursor-pointer', 'hover:opacity-80');
+            });
+            
+            // Form alanlarını aktif et
+            const formInputs = document.querySelectorAll('input, textarea, select');
+            formInputs.forEach(input => {
+                input.disabled = false;
+                input.classList.remove('opacity-50', 'cursor-not-allowed');
+            });
+            
+            console.log('Blog düzenleme seçenekleri aktif edildi!');
+        }
+
+        // Initialize Quill editor
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuth()) {
+                enableEditOptions();
+                
+                quill = new Quill('#blogContent', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link', 'image'],
+                            ['clean']
+                        ]
+                    }
+                });
+            }
+        });
+
+        function openBlogModal(blogId = null) {
+            currentBlogId = blogId;
+            const modal = document.getElementById('blogModal');
+            const title = document.getElementById('modalTitle');
+            
+            if (blogId) {
+                title.textContent = 'Blog Yazısını Düzenle';
+                // Load blog data
+                loadBlogData(blogId);
+            } else {
+                title.textContent = 'Yeni Blog Yazısı';
+                document.getElementById('blogForm').reset();
+                quill.setContents([]);
+                document.getElementById('imagePreview').classList.add('hidden');
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeBlogModal() {
+            document.getElementById('blogModal').classList.add('hidden');
+            currentBlogId = null;
+        }
+
+        function editBlog(blogId) {
+            openBlogModal(blogId);
+        }
+
+        function deleteBlog(blogId) {
+            if (confirm('Bu blog yazısını silmek istediğinizden emin misiniz?')) {
+                // Delete blog logic
+                console.log('Deleting blog:', blogId);
+                // Here you would make an API call to delete the blog
+                alert('Blog yazısı silindi!');
+            }
+        }
+
+        function loadBlogData(blogId) {
+            // Load blog data from API
+            console.log('Loading blog data for ID:', blogId);
+            // Here you would make an API call to get blog data
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    const img = document.getElementById('previewImg');
+                    img.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Form submission
+        document.getElementById('blogForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('blogTitle').value,
+                category: document.getElementById('blogCategory').value,
+                summary: document.getElementById('blogSummary').value,
+                content: quill.getContents(),
+                image: document.getElementById('imageInput').files[0]
+            };
+
+            console.log('Saving blog:', formData);
+            // Here you would make an API call to save the blog
+            
+            alert('Blog yazısı kaydedildi!');
+            closeBlogModal();
+        });
+
+        // Drag and drop for image upload
+        const uploadArea = document.querySelector('.image-upload-area');
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('imageInput').files = files;
+                handleImageUpload({ target: { files: files } });
+            }
+        });
+    </script>
+</body>
+</html>

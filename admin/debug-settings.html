@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Site Ayarları</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-6">
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-brain text-indigo-600 text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold">Admin Panel</h1>
+            </div>
+            
+            <nav class="space-y-2">
+                <a href="dashboard.html" class="flex items-center px-4 py-3 rounded-lg hover:bg-white/20">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="blog-management.html" class="flex items-center px-4 py-3 rounded-lg hover:bg-white/20">
+                    <i class="fas fa-blog mr-3"></i>
+                    Blog Yönetimi
+                </a>
+                <a href="site-settings.html" class="flex items-center px-4 py-3 rounded-lg bg-white/25">
+                    <i class="fas fa-cog mr-3"></i>
+                    Site Ayarları
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Debug Site Ayarları</h2>
+                    <div class="flex space-x-3">
+                        <button onclick="testSave()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                            <i class="fas fa-save mr-2"></i>
+                            Test Kaydet
+                        </button>
+                        <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            Çıkış Yap
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="p-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Test Formu</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Site Başlığı</label>
+                            <input type="text" id="siteTitle" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="Test Başlık">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
+                            <input type="text" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="+90 555 123 45 67">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">E-posta</label>
+                            <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="test@example.com">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <button onclick="testSave()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 mr-4">
+                            Test Kaydet
+                        </button>
+                        <button onclick="testLoad()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            Test Yükle
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mt-6 bg-gray-100 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-2">Debug Bilgileri:</h4>
+                    <div id="debugInfo" class="text-sm text-gray-600">
+                        Sayfa yüklendi...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateDebugInfo(message) {
+            const debugDiv = document.getElementById('debugInfo');
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `<br>[${timestamp}] ${message}`;
+        }
+
+        function testSave() {
+            const settings = {
+                siteTitle: document.getElementById('siteTitle').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value
+            };
+            
+            localStorage.setItem('adminSettings', JSON.stringify(settings));
+            updateDebugInfo('Ayarlar kaydedildi: ' + JSON.stringify(settings));
+            alert('Test ayarları kaydedildi!');
+        }
+
+        function testLoad() {
+            const settings = localStorage.getItem('adminSettings');
+            if (settings) {
+                const parsed = JSON.parse(settings);
+                updateDebugInfo('Ayarlar yüklendi: ' + JSON.stringify(parsed));
+                
+                document.getElementById('siteTitle').value = parsed.siteTitle || '';
+                document.getElementById('phone').value = parsed.phone || '';
+                document.getElementById('email').value = parsed.email || '';
+            } else {
+                updateDebugInfo('Kaydedilmiş ayar bulunamadı');
+            }
+        }
+
+        function logout() {
+            if (confirm('Psikolog Onur Uslu sayfasından çıkmak istediğinize emin misiniz?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                localStorage.removeItem('adminSettings');
+                window.location.href = 'login.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDebugInfo('Sayfa yüklendi');
+            updateDebugInfo('JavaScript çalışıyor');
+            updateDebugInfo('Tailwind CSS yüklendi');
+        });
+    </script>
+</body>
+</html>

@@ -48,8 +48,8 @@
                         id="email" 
                         name="email" 
                         required
-                        class="w-full px-4 py-3 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 input-focus transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/30"
-                        placeholder="admin@psikologonuruslu.com"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-500 input-focus transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="Email adresinizi girin"
                     >
                 </div>
 
@@ -63,13 +63,13 @@
                             id="password" 
                             name="password" 
                             required
-                            class="w-full px-4 py-3 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 input-focus transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/30 pr-12"
-                            placeholder="••••••••"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-500 input-focus transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-12"
+                            placeholder="Şifrenizi girin"
                         >
                         <button 
                             type="button" 
                             id="togglePassword"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
                         >
                             <i class="fas fa-eye"></i>
                         </button>
@@ -144,46 +144,27 @@
             const email = formData.get('email');
             const password = formData.get('password');
             
-            // Loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Giriş yapılıyor...';
-            submitBtn.disabled = true;
-            
-            try {
-                const response = await fetch('http://localhost:5001/api/auth/admin/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+            // Basit giriş kontrolü (MongoDB olmadan)
+            if (email === 'admin@psikologonuruslu.com' && password === 'admin123') {
+                // Başarılı giriş
+                localStorage.setItem('adminToken', 'admin-login-token');
+                localStorage.setItem('adminUser', JSON.stringify({
+                    name: 'Admin',
+                    email: 'admin@psikologonuruslu.com',
+                    role: 'admin'
+                }));
                 
-                const data = await response.json();
-                
-                if (response.ok) {
-                    // Başarılı giriş
-                    localStorage.setItem('adminToken', data.token);
-                    localStorage.setItem('adminUser', JSON.stringify(data.user));
-                    
-                    showMessage('success', 'Giriş başarılı! Yönlendiriliyorsunuz...');
-                    
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                } else {
-                    showMessage('error', data.message || 'Giriş başarısız!');
-                }
-            } catch (error) {
-                showMessage('error', 'Bağlantı hatası! Lütfen tekrar deneyin.');
-            } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                showSuccess('Giriş başarılı! Yönlendiriliyorsunuz...');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            } else {
+                showError('Geçersiz email veya şifre!');
             }
         });
 
-        // Mesaj gösterme fonksiyonu
-        function showMessage(type, message) {
+        // Mesaj gösterme fonksiyonları
+        function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             const successDiv = document.getElementById('successMessage');
             
@@ -191,17 +172,28 @@
             errorDiv.classList.add('hidden');
             successDiv.classList.add('hidden');
             
-            if (type === 'error') {
-                errorDiv.querySelector('span').textContent = message;
-                errorDiv.classList.remove('hidden');
-            } else {
-                successDiv.querySelector('span').textContent = message;
-                successDiv.classList.remove('hidden');
-            }
+            errorDiv.querySelector('span').textContent = message;
+            errorDiv.classList.remove('hidden');
             
             // 5 saniye sonra mesajı gizle
             setTimeout(() => {
                 errorDiv.classList.add('hidden');
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            
+            // Önceki mesajları gizle
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+            
+            successDiv.querySelector('span').textContent = message;
+            successDiv.classList.remove('hidden');
+            
+            // 5 saniye sonra mesajı gizle
+            setTimeout(() => {
                 successDiv.classList.add('hidden');
             }, 5000);
         }
