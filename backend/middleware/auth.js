@@ -18,10 +18,26 @@ const authenticateToken = async (req, res, next) => {
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
-    
+
+    // Check if MongoDB is connected
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      // Mock mode: if token is valid (which verify checks), and it looks like our mock admin
+      if (decoded.role === 'admin' || decoded.id === 'mock-admin-id') {
+        req.user = {
+          _id: 'mock-admin-id',
+          name: 'Admin User',
+          email: 'admin@psikologonuruslu.com',
+          role: 'admin',
+          isActive: true
+        };
+        return next();
+      }
+    }
+
     // Get user from database
     const user = await User.findById(decoded.id).select('-password');
-    
+
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -46,7 +62,7 @@ const authenticateToken = async (req, res, next) => {
         message: 'Invalid token'
       });
     }
-    
+
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
@@ -80,11 +96,11 @@ const requireAdmin = (req, res, next) => {
  */
 const requireOwnershipOrAdmin = (req, res, next) => {
   const resourceUserId = req.params.userId || req.body.userId;
-  
+
   if (req.user.role === 'admin' || req.user._id.toString() === resourceUserId) {
     return next();
   }
-  
+
   return res.status(403).json({
     success: false,
     message: 'Access denied - insufficient permissions'
@@ -98,9 +114,9 @@ const requireAppointmentAccess = async (req, res, next) => {
   try {
     const appointmentId = req.params.id;
     const Appointment = require('../models/Appointment');
-    
+
     const appointment = await Appointment.findById(appointmentId);
-    
+
     if (!appointment) {
       return res.status(404).json({
         success: false,
@@ -171,12 +187,12 @@ const optionalAuth = async (req, res, next) => {
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
       const user = await User.findById(decoded.id).select('-password');
-      
+
       if (user && user.isActive) {
         req.user = user;
       }
     }
-    
+
     next();
   } catch (error) {
     // Continue without authentication if token is invalid

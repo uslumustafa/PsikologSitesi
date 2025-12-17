@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesaj Yönetimi - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .message-unread {
+            font-weight: bold;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white shadow-lg">
+            <div class="p-6">
+                <div class="flex items-center mb-8">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-user-shield text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold">Admin Panel</h2>
+                        <p class="text-sm text-white/80">Psikolog Onur Uslu</p>
+                    </div>
+                </div>
+
+                <nav class="space-y-2">
+                    <a href="dashboard.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-tachometer-alt mr-3"></i>
+                        Dashboard
+                    </a>
+                    <a href="appointments.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-calendar-alt mr-3"></i>
+                        Randevular
+                    </a>
+                    <a href="blog-management.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-blog mr-3"></i>
+                        Blog Yönetimi
+                    </a>
+                    <a href="messages.html"
+                        class="nav-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-envelope mr-3"></i>
+                        Mesajlar
+                    </a>
+                </nav>
+            </div>
+
+            <div class="absolute bottom-0 w-64 p-6">
+                <button id="logoutBtn"
+                    class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Çıkış Yap
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Mesaj Yönetimi</h1>
+                        <p class="text-gray-600">Gelen iletişim mesajlarını görüntüle</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-3">
+                            <img src="https://via.placeholder.com/40" alt="Admin" class="w-10 h-10 rounded-full">
+                            <div>
+                                <p class="font-semibold text-gray-800" id="adminName">Admin</p>
+                                <p class="text-sm text-gray-600">Yönetici</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Messages List -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800">Gelen Kutusu</h3>
+                        <button onclick="loadMessages()" class="text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-sync-alt mr-1"></i> Yenile
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Tarih</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">İsim</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Konu</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="messagesTableBody">
+                                <!-- Dinamik içerik -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">Mesaj Detayı</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Gönderen</label>
+                                <p id="msgName" class="text-gray-900 font-medium"></p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Tarih</label>
+                                <p id="msgDate" class="text-gray-900"></p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Email</label>
+                                <p id="msgEmail" class="text-gray-900"></p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Telefon</label>
+                                <p id="msgPhone" class="text-gray-900"></p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Konu</label>
+                            <p id="msgSubject" class="text-gray-900 font-medium border-b pb-2"></p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Mesaj</label>
+                            <div id="msgContent" class="bg-gray-50 p-4 rounded-lg text-gray-800 whitespace-pre-wrap">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end space-x-4 mt-8">
+                        <a id="replyBtn" href="#"
+                            class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-reply mr-2"></i>Yanıtla
+                        </a>
+                        <button id="closeBtn"
+                            class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Kapat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API URL
+        const API_URL = 'http://localhost:5002/api';
+
+        // Global variables
+        let adminToken = localStorage.getItem('adminToken');
+        let adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+        let messages = [];
+
+        // Check authentication
+        if (!adminToken) {
+            window.location.href = 'login.html';
+        }
+
+        // Update admin info
+        document.getElementById('adminName').textContent = adminUser.name || 'Admin';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadMessages();
+        });
+
+        async function loadMessages() {
+            try {
+                const response = await fetch(`${API_URL}/contact`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    messages = result.data.messages;
+                    renderMessages(messages);
+                } else {
+                    console.error('Mesajlar yüklenemedi');
+                    // Mock data fallback handled by backend
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+            }
+        }
+
+        function renderMessages(msgs) {
+            const tbody = document.getElementById('messagesTableBody');
+            tbody.innerHTML = '';
+
+            if (!msgs || msgs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-500">Henüz mesaj bulunmuyor</td></tr>';
+                return;
+            }
+
+            msgs.forEach(msg => {
+                const row = document.createElement('tr');
+                row.className = `border-b border-gray-100 hover:bg-gray-50 ${!msg.read ? 'bg-blue-50' : ''}`;
+
+                const dateStr = new Date(msg.createdAt).toLocaleDateString('tr-TR', {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-sm text-gray-600">${dateStr}</td>
+                    <td class="py-3 px-4 font-medium text-gray-800">${msg.name}</td>
+                    <td class="py-3 px-4 text-gray-600">${msg.email}</td>
+                    <td class="py-3 px-4 text-gray-800">${msg.subject}</td>
+                    <td class="py-3 px-4">
+                        <button class="text-blue-600 hover:text-blue-800 mr-2" 
+                            onclick="viewMessage('${msg._id}')" title="Görüntüle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function viewMessage(id) {
+            const msg = messages.find(m => m._id === id);
+            if (!msg) return;
+
+            document.getElementById('msgName').textContent = msg.name;
+            document.getElementById('msgDate').textContent = new Date(msg.createdAt).toLocaleString('tr-TR');
+            document.getElementById('msgEmail').textContent = msg.email;
+            document.getElementById('msgPhone').textContent = msg.phone || '-';
+            document.getElementById('msgSubject').textContent = msg.subject;
+            document.getElementById('msgContent').textContent = msg.message;
+
+            document.getElementById('replyBtn').href = `mailto:${msg.email}?subject=Ynt: ${msg.subject}`;
+
+            document.getElementById('messageModal').classList.remove('hidden');
+        }
+
+        function hideModal() {
+            document.getElementById('messageModal').classList.add('hidden');
+        }
+
+        document.getElementById('closeModal').addEventListener('click', hideModal);
+        document.getElementById('closeBtn').addEventListener('click', hideModal);
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+
+</html>

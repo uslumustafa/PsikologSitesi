@@ -31,71 +31,71 @@ function applySettings(settings) {
         const titleMeta = document.querySelector('meta[name="title"]');
         if (titleMeta) titleMeta.content = settings.siteTitle;
     }
-    
+
     // Site açıklamasını güncelle
     if (settings.siteDescription) {
         const descMeta = document.querySelector('meta[name="description"]');
         if (descMeta) descMeta.content = settings.siteDescription;
     }
-    
+
     // Telefon numarasını güncelle
     if (settings.phone) {
         const phoneElements = document.querySelectorAll('[data-phone]');
         phoneElements.forEach(el => el.textContent = settings.phone);
     }
-    
+
     // E-posta adresini güncelle
     if (settings.email) {
         const emailElements = document.querySelectorAll('[data-email]');
         emailElements.forEach(el => el.textContent = settings.email);
     }
-    
+
     // Adres bilgisini güncelle
     if (settings.address) {
         const addressElements = document.querySelectorAll('[data-address]');
         addressElements.forEach(el => el.textContent = settings.address);
     }
-    
+
     // Hakkımda bölümünü güncelle
     if (settings.aboutTitle) {
         const aboutTitle = document.querySelector('[data-about-title]');
         if (aboutTitle) aboutTitle.textContent = settings.aboutTitle;
     }
-    
+
     if (settings.aboutDescription) {
         const aboutDesc = document.querySelector('[data-about-description]');
         if (aboutDesc) aboutDesc.textContent = settings.aboutDescription;
     }
-    
+
     // İstatistikleri güncelle
     if (settings.experienceYears) {
         const expElements = document.querySelectorAll('[data-experience]');
         expElements.forEach(el => el.textContent = settings.experienceYears);
     }
-    
+
     if (settings.totalClients) {
         const clientElements = document.querySelectorAll('[data-clients]');
         clientElements.forEach(el => el.textContent = settings.totalClients);
     }
-    
+
     if (settings.successRate) {
         const successElements = document.querySelectorAll('[data-success-rate]');
         successElements.forEach(el => el.textContent = settings.successRate);
     }
-    
+
     // Hizmetleri güncelle
     if (settings.services && Array.isArray(settings.services)) {
         const servicesContainer = document.querySelector('[data-services]');
         if (servicesContainer) {
-            servicesContainer.innerHTML = settings.services.map(service => 
+            servicesContainer.innerHTML = settings.services.map(service =>
                 `<li class="flex items-center mb-3">
-                    <i class="fas fa-check-circle text-indigo-600 mr-3"></i>
+                    <i class="fas fa-check-circle text-teal-600 mr-3"></i>
                     <span class="text-gray-700">${service}</span>
                 </li>`
             ).join('');
         }
     }
-    
+
     // Profil fotoğraflarını güncelle
     if (settings.mainPhoto) {
         const mainPhotoElements = document.querySelectorAll('[data-main-photo]');
@@ -104,7 +104,7 @@ function applySettings(settings) {
             el.alt = 'Psikolog Onur Uslu';
         });
     }
-    
+
     if (settings.officePhoto) {
         const officePhotoElements = document.querySelectorAll('[data-office-photo]');
         officePhotoElements.forEach(el => {
@@ -112,12 +112,12 @@ function applySettings(settings) {
             el.alt = 'Ofis Ortamı';
         });
     }
-    
+
     console.log('Admin ayarları uygulandı!');
 }
 
 // ===== HEADER SCROLL EFFECT =====
-window.addEventListener('scroll', function() {
+window.addEventListener('scroll', function () {
     if (window.scrollY > 50) {
         header.classList.add('header-scrolled');
     } else {
@@ -153,7 +153,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
-        
+
         const target = document.querySelector(targetId);
         if (target) {
             const headerOffset = 80;
@@ -174,7 +174,7 @@ function revealOnScroll() {
         const windowHeight = window.innerHeight;
         const elementTop = element.getBoundingClientRect().top;
         const elementVisible = 150;
-        
+
         if (elementTop < windowHeight - elementVisible) {
             element.classList.add('visible');
         }
@@ -204,7 +204,7 @@ function closeBlogModal(modalId) {
 
 // Close modal when clicking outside
 document.querySelectorAll('[id^="modal-"]').forEach(modal => {
-    modal.addEventListener('click', function(e) {
+    modal.addEventListener('click', function (e) {
         if (e.target === this) {
             this.classList.add('hidden');
             document.body.style.overflow = 'auto';
@@ -218,29 +218,29 @@ window.closeBlogModal = closeBlogModal;
 
 // ===== CONTACT FORM =====
 if (contactForm) {
-    contactForm.addEventListener('submit', async function(e) {
+    contactForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        
+
         // Validate form before submission
         const inputs = this.querySelectorAll('input[required], textarea[required]');
         let isFormValid = true;
-        
+
         inputs.forEach(input => {
             if (!validateField(input)) {
                 isFormValid = false;
             }
         });
-        
+
         if (!isFormValid) {
             // Show error message
             showErrorMessage('Lütfen tüm zorunlu alanları doğru şekilde doldurun.');
             return;
         }
-        
+
         // Show loader
         submitText.style.display = 'none';
         submitLoader.style.display = 'block';
-        
+
         // Get form data
         const formData = new FormData(this);
         const data = {
@@ -250,10 +250,11 @@ if (contactForm) {
             subject: formData.get('subject'),
             message: formData.get('message')
         };
-        
+
         try {
             // ===== BACKEND INTEGRATION =====
-            // Option 1: Formspree
+            // Option 1: Formspree (Disabled)
+            /*
             const response = await fetch('https://formspree.io/f/mnnvrqop', {
                 method: 'POST',
                 headers: {
@@ -261,21 +262,22 @@ if (contactForm) {
                 },
                 body: JSON.stringify(data)
             });
-            
+            */
+
             // Option 2: Your custom backend
-            // const response = await fetch('/api/contact', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(data)
-            // });
-            
+            const response = await fetch('http://localhost:5002/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
             if (response.ok) {
                 // Show success message
                 showSuccessMessage('Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağım.');
                 contactForm.reset();
-                
+
                 // Clear validation states
                 inputs.forEach(input => {
                     input.classList.remove('border-red-500', 'border-green-500');
@@ -285,7 +287,7 @@ if (contactForm) {
             } else {
                 throw new Error('Form submission failed');
             }
-            
+
         } catch (error) {
             console.error('Form submission error:', error);
             showErrorMessage('Bir hata oluştu. Lütfen tekrar deneyin veya WhatsApp üzerinden iletişime geçin.');
@@ -301,7 +303,7 @@ if (contactForm) {
 function showSuccessMessage(message) {
     successMessage.textContent = message;
     successMessage.classList.add('show');
-    
+
     // Hide success message after 5 seconds
     setTimeout(() => {
         successMessage.classList.remove('show');
@@ -317,10 +319,10 @@ function showErrorMessage(message) {
         errorDiv.className = 'error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
         contactForm.insertBefore(errorDiv, contactForm.firstChild);
     }
-    
+
     errorDiv.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${message}`;
     errorDiv.style.display = 'block';
-    
+
     // Hide error message after 5 seconds
     setTimeout(() => {
         errorDiv.style.display = 'none';
@@ -333,7 +335,7 @@ if (heroTitle) {
     const originalText = heroTitle.innerHTML;
     heroTitle.innerHTML = '';
     heroTitle.style.visibility = 'visible';
-    
+
     let index = 0;
     function typeWriter() {
         if (index < originalText.length) {
@@ -342,7 +344,7 @@ if (heroTitle) {
             setTimeout(typeWriter, 50);
         }
     }
-    
+
     // Start typing after page load
     setTimeout(typeWriter, 500);
 }
@@ -369,7 +371,7 @@ if (testimonials.length > 0) {
 window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
     const parallax = document.querySelectorAll('.parallax');
-    
+
     parallax.forEach(element => {
         const speed = element.dataset.speed || 0.5;
         element.style.transform = `translateY(${scrolled * speed}px)`;
@@ -412,7 +414,7 @@ const emailInput = document.querySelector('input[type="email"]');
 const phoneInput = document.querySelector('input[type="tel"]');
 
 if (emailInput) {
-    emailInput.addEventListener('blur', function() {
+    emailInput.addEventListener('blur', function () {
         if (!validateEmail(this.value)) {
             this.style.borderColor = '#ef4444';
         } else {
@@ -422,7 +424,7 @@ if (emailInput) {
 }
 
 if (phoneInput) {
-    phoneInput.addEventListener('blur', function() {
+    phoneInput.addEventListener('blur', function () {
         if (!validatePhone(this.value)) {
             this.style.borderColor = '#ef4444';
         } else {
@@ -444,13 +446,13 @@ function trackEvent(category, action, label) {
 
 // Track button clicks
 document.querySelectorAll('.btn-primary').forEach(button => {
-    button.addEventListener('click', function() {
+    button.addEventListener('click', function () {
         trackEvent('Button', 'Click', this.textContent);
     });
 });
 
 // ===== PAGE LOAD OPTIMIZATIONS =====
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Hide loading screen after page load
     setTimeout(() => {
         const loadingScreen = document.getElementById('loading-screen');
@@ -462,12 +464,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }
     }, 1000);
-    
+
     // Initialize AOS or other libraries if needed
     if (typeof AOS !== 'undefined') {
         AOS.init();
     }
-    
+
     // Set current year in footer
     const yearElement = document.getElementById('year');
     if (yearElement) {
@@ -476,14 +478,14 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ===== ESCAPE KEY HANDLER =====
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         // Close all modals
         document.querySelectorAll('.modal.active').forEach(modal => {
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
         });
-        
+
         // Close mobile menu
         if (mobileMenu && mobileMenu.classList.contains('active')) {
             mobileMenu.classList.remove('active');
@@ -492,7 +494,7 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ===== PERFORMANCE MONITORING =====
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     // Log page load time
     const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
     console.log('Page load time:', loadTime + 'ms');
@@ -502,7 +504,7 @@ window.addEventListener('load', function() {
 function animateCounter(element, target, duration = 2000) {
     let start = 0;
     const increment = target / (duration / 16);
-    
+
     function updateCounter() {
         start += increment;
         if (start < target) {
@@ -512,7 +514,7 @@ function animateCounter(element, target, duration = 2000) {
             element.textContent = target;
         }
     }
-    
+
     updateCounter();
 }
 
@@ -542,9 +544,9 @@ function createScrollToTopButton() {
     button.className = 'fixed bottom-20 right-6 bg-primary text-white w-12 h-12 rounded-full shadow-lg hover:bg-primary-dark transition-all duration-300 z-40 opacity-0 pointer-events-none';
     button.id = 'scroll-to-top';
     button.title = 'Yukarı Çık';
-    
+
     document.body.appendChild(button);
-    
+
     // Show/hide button based on scroll position
     window.addEventListener('scroll', () => {
         if (window.pageYOffset > 300) {
@@ -555,7 +557,7 @@ function createScrollToTopButton() {
             button.classList.remove('opacity-100');
         }
     });
-    
+
     // Scroll to top functionality
     button.addEventListener('click', () => {
         window.scrollTo({
@@ -569,21 +571,21 @@ function createScrollToTopButton() {
 function enhanceFormValidation() {
     const form = document.getElementById('contact-form');
     if (!form) return;
-    
+
     const inputs = form.querySelectorAll('input, textarea');
-    
+
     inputs.forEach(input => {
         // Real-time validation
-        input.addEventListener('input', function() {
+        input.addEventListener('input', function () {
             validateField(this);
         });
-        
+
         // Focus effects
-        input.addEventListener('focus', function() {
+        input.addEventListener('focus', function () {
             this.parentElement.classList.add('focused');
         });
-        
-        input.addEventListener('blur', function() {
+
+        input.addEventListener('blur', function () {
             this.parentElement.classList.remove('focused');
             validateField(this);
         });
@@ -595,19 +597,19 @@ function validateField(field) {
     const type = field.type;
     let isValid = true;
     let errorMessage = '';
-    
+
     // Remove existing validation classes and error messages
     field.classList.remove('border-red-500', 'border-green-500');
     const existingError = field.parentElement.querySelector('.field-error');
     if (existingError) {
         existingError.remove();
     }
-    
+
     // Required field check
     if (field.hasAttribute('required') && !value) {
         isValid = false;
         errorMessage = 'Bu alan zorunludur';
-    } 
+    }
     // Email validation
     else if (type === 'email' && value) {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -615,7 +617,7 @@ function validateField(field) {
             isValid = false;
             errorMessage = 'Geçerli bir e-posta adresi giriniz';
         }
-    } 
+    }
     // Phone validation
     else if (type === 'tel' && value) {
         const phonePattern = /^0[5][0-9]{9}$/;
@@ -643,11 +645,11 @@ function validateField(field) {
             errorMessage = 'Mesaj en fazla 500 karakter olabilir';
         }
     }
-    
+
     // Apply validation styling
     if (value) {
         field.classList.add(isValid ? 'border-green-500' : 'border-red-500');
-        
+
         // Show error message
         if (!isValid && errorMessage) {
             const errorDiv = document.createElement('div');
@@ -656,18 +658,18 @@ function validateField(field) {
             field.parentElement.appendChild(errorDiv);
         }
     }
-    
+
     return isValid;
 }
 
 // ===== INITIALIZE ENHANCED FEATURES =====
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Create scroll to top button
     createScrollToTopButton();
-    
+
     // Initialize form validation
     enhanceFormValidation();
-    
+
     // Observe elements for counter animation
     const counterSection = document.querySelector('.counter-section');
     if (counterSection) {
@@ -679,7 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
 const scrollToTopBtn = document.getElementById('scroll-to-top');
 
 // Show/hide scroll to top button based on scroll position
-window.addEventListener('scroll', function() {
+window.addEventListener('scroll', function () {
     if (window.scrollY > 300) {
         scrollToTopBtn.classList.add('show');
     } else {
@@ -688,7 +690,7 @@ window.addEventListener('scroll', function() {
 });
 
 // Scroll to top when button is clicked
-scrollToTopBtn.addEventListener('click', function() {
+scrollToTopBtn.addEventListener('click', function () {
     window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -696,10 +698,10 @@ scrollToTopBtn.addEventListener('click', function() {
 });
 
 // ===== PAGE LOAD =====
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Admin ayarlarını yükle
     loadAdminSettings();
-    
+
     // Her 5 saniyede bir admin ayarlarını kontrol et
     setInterval(loadAdminSettings, 5000);
 });

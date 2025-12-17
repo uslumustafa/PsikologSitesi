@@ -19,6 +19,7 @@ const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const blogRoutes = require('./routes/blog');
 const siteSettingsRoutes = require('./routes/siteSettings');
+const contactRoutes = require('./routes/contact');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -43,7 +44,7 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [process.env.FRONTEND_URL || 'http://localhost:3000', 'http://localhost:8080'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -182,6 +183,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', authenticateToken, adminRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/site-settings', siteSettingsRoutes);
+app.use('/api/contact', contactRoutes);
 
 // API documentation endpoint
 app.get('/api-docs.json', (req, res) => {
@@ -213,7 +215,7 @@ const connectDB = async () => {
 };
 
 // Start server
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 
 const startServer = async () => {
   try {
@@ -224,7 +226,7 @@ const startServer = async () => {
       console.log('⚠️  MongoDB bağlantısı kurulamadı, server mock data ile çalışacak');
       console.log('💡 MongoDB cluster connection string ekleyerek gerçek veri kullanabilirsiniz');
     }
-    
+
     const server = app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);

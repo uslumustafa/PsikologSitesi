@@ -269,7 +269,7 @@ router.post('/verify-email', [
 
     // Verify token
     const decoded = verifyRefreshToken(token);
-    
+
     // Find user
     const user = await User.findById(decoded.id);
     if (!user) {
@@ -367,7 +367,7 @@ router.post('/forgot-password', [
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
       await user.save({ validateBeforeSave: false });
-      
+
       return res.status(500).json({
         success: false,
         message: 'Failed to send reset email'
@@ -493,7 +493,7 @@ router.post('/refresh', [
 
     // Verify refresh token
     const decoded = verifyRefreshToken(refreshToken);
-    
+
     // Find user
     const user = await User.findById(decoded.id);
     if (!user || !user.isActive) {
@@ -635,6 +635,40 @@ router.post('/admin/login', [
     }
 
     const { email, password } = req.body;
+
+    // Check if MongoDB is connected
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('MongoDB not connected, using mock admin login');
+      // Mock Admin Login
+      if (email === 'admin@psikologonuruslu.com' && password === 'admin123') {
+        const mockUser = {
+          _id: 'mock-admin-id',
+          name: 'Admin User',
+          email: 'admin@psikologonuruslu.com',
+          role: 'admin',
+          isActive: true
+        };
+
+        // Generate mock tokens
+        const jwt = require('jsonwebtoken');
+        const token = jwt.sign({ id: mockUser._id, role: mockUser.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+        const refreshToken = jwt.sign({ id: mockUser._id }, process.env.JWT_REFRESH_SECRET || 'refresh-secret', { expiresIn: '7d' });
+
+        return res.json({
+          success: true,
+          message: 'Admin login successful (Mock Mode)',
+          token,
+          refreshToken,
+          user: mockUser
+        });
+      } else {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid credentials (Mock Mode)'
+        });
+      }
+    }
 
     // Find admin user
     const user = await User.findOne({ email, role: 'admin' });

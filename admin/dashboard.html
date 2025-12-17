@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,30 +13,37 @@
         * {
             font-family: 'Inter', sans-serif;
         }
+
         .sidebar {
             background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
         }
+
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .card-hover:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
+
         .nav-item {
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
+
         .nav-item:hover {
             background: rgba(255, 255, 255, 0.15);
             transform: translateX(5px);
         }
+
         .nav-item.active {
             background: rgba(255, 255, 255, 0.25);
             box-shadow: inset 4px 0 0 #FFFFFF;
         }
+
         .nav-item::before {
             content: '';
             position: absolute;
@@ -46,44 +54,76 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
+
         .nav-item:hover::before {
             left: 100%;
         }
+
         .stat-card {
             background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
             border: 1px solid rgba(99, 102, 241, 0.1);
             transition: all 0.3s ease;
         }
+
         .stat-card:hover {
             border-color: rgba(99, 102, 241, 0.3);
             box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
         }
+
         .pulse-animation {
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
         }
+
         .fade-in {
             animation: fadeIn 0.6s ease-out;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .slide-in {
             animation: slideIn 0.8s ease-out;
         }
+
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
+
         .glass-effect {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
         .gradient-text {
             background: linear-gradient(135deg, #6366F1, #8B5CF6);
             -webkit-background-clip: text;
@@ -92,6 +132,7 @@
         }
     </style>
 </head>
+
 <body class="bg-gray-100">
     <div class="flex h-screen">
         <!-- Sidebar -->
@@ -106,45 +147,54 @@
                         <p class="text-sm text-white/80">Psikolog Onur Uslu</p>
                     </div>
                 </div>
-                
+
                 <nav class="space-y-2">
-                    <a href="dashboard.html" class="nav-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                    <a href="dashboard.html"
+                        class="nav-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200">
                         <i class="fas fa-tachometer-alt mr-3"></i>
                         Dashboard
                     </a>
-                    <a href="blog-management.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                    <a href="blog-management.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
                         <i class="fas fa-blog mr-3"></i>
                         Blog Yönetimi
                     </a>
-                    <a href="appointments.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                    <a href="appointments.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
                         <i class="fas fa-calendar-alt mr-3"></i>
                         Randevular
                     </a>
-                    <a href="site-settings.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                    <a href="site-settings.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
                         <i class="fas fa-cog mr-3"></i>
                         Site Ayarları
                     </a>
-                    <a href="../index.html" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                    <a href="../index.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
                         <i class="fas fa-external-link-alt mr-3"></i>
                         Siteyi Görüntüle
                     </a>
-                    <button onclick="logout()" class="nav-item w-full text-left flex items-center px-4 py-3 rounded-lg transition-all duration-200 hover:bg-red-500/20">
+                    <button onclick="logout()"
+                        class="nav-item w-full text-left flex items-center px-4 py-3 rounded-lg transition-all duration-200 hover:bg-red-500/20">
                         <i class="fas fa-sign-out-alt mr-3"></i>
                         Çıkış Yap
                     </button>
-                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="services">
+                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200"
+                        data-page="services">
                         <i class="fas fa-cogs mr-3"></i>
                         Hizmetler
                     </a>
-                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200" data-page="messages">
+                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200"
+                        data-page="messages">
                         <i class="fas fa-envelope mr-3"></i>
                         Mesajlar
                     </a>
                 </nav>
             </div>
-            
+
             <div class="absolute bottom-0 w-64 p-6">
-                <button id="logoutBtn" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors">
+                <button id="logoutBtn"
+                    class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors">
                     <i class="fas fa-sign-out-alt mr-2"></i>Çıkış Yap
                 </button>
             </div>
@@ -161,13 +211,17 @@
                     </div>
                     <div class="flex items-center space-x-4 slide-in">
                         <div class="relative">
-                            <button class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            <button
+                                class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
                                 <i class="fas fa-bell mr-2"></i>Bildirimler
-                                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center pulse-animation">3</span>
+                                <span
+                                    class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center pulse-animation">3</span>
                             </button>
                         </div>
-                        <div class="flex items-center space-x-3 bg-white/50 rounded-xl p-2 hover:bg-white/80 transition-all duration-300">
-                            <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <div
+                            class="flex items-center space-x-3 bg-white/50 rounded-xl p-2 hover:bg-white/80 transition-all duration-300">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                                 <i class="fas fa-user text-white"></i>
                             </div>
                             <div>
@@ -175,7 +229,8 @@
                                 <p class="text-sm text-gray-600" id="adminRole">Yönetici</p>
                             </div>
                         </div>
-                        <button id="logoutBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        <button id="logoutBtn"
+                            class="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
                             <i class="fas fa-sign-out-alt mr-2"></i>Çıkış
                         </button>
                     </div>
@@ -188,7 +243,8 @@
                 <div id="dashboard-content" class="content-section">
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in" style="animation-delay: 0.1s">
+                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in"
+                            style="animation-delay: 0.1s">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-600 text-sm font-medium">Bugünkü Randevular</p>
@@ -197,13 +253,15 @@
                                         <i class="fas fa-arrow-up mr-1"></i>+12% dün
                                     </p>
                                 </div>
-                                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                <div
+                                    class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
                                     <i class="fas fa-calendar-day text-white text-2xl"></i>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in" style="animation-delay: 0.2s">
+                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in"
+                            style="animation-delay: 0.2s">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-600 text-sm font-medium">Bu Hafta</p>
@@ -212,13 +270,15 @@
                                         <i class="fas fa-arrow-up mr-1"></i>+8% geçen hafta
                                     </p>
                                 </div>
-                                <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                <div
+                                    class="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
                                     <i class="fas fa-calendar-week text-white text-2xl"></i>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in" style="animation-delay: 0.3s">
+                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in"
+                            style="animation-delay: 0.3s">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-600 text-sm font-medium">Toplam Müşteri</p>
@@ -227,13 +287,15 @@
                                         <i class="fas fa-arrow-up mr-1"></i>+15% bu ay
                                     </p>
                                 </div>
-                                <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                <div
+                                    class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
                                     <i class="fas fa-users text-white text-2xl"></i>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in" style="animation-delay: 0.4s">
+                        <div class="stat-card rounded-2xl shadow-lg p-6 card-hover fade-in"
+                            style="animation-delay: 0.4s">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-600 text-sm font-medium">Aylık Gelir</p>
@@ -242,7 +304,8 @@
                                         <i class="fas fa-arrow-up mr-1"></i>+22% geçen ay
                                     </p>
                                 </div>
-                                <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                <div
+                                    class="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
                                     <i class="fas fa-lira-sign text-white text-2xl"></i>
                                 </div>
                             </div>
@@ -327,6 +390,9 @@
     </div>
 
     <script>
+        // API URL
+        const API_URL = 'http://localhost:5002/api';
+
         // Global variables
         let adminToken = localStorage.getItem('adminToken');
         let adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
@@ -341,26 +407,34 @@
 
         // Navigation
         document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
+            item.addEventListener('click', function (e) {
                 e.preventDefault();
-                
+
                 // Remove active class from all items
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                
+
                 // Add active class to clicked item
                 this.classList.add('active');
-                
+
                 // Get page name
                 const page = this.getAttribute('data-page');
-                
+
                 // Hide all content sections
                 document.querySelectorAll('.content-section').forEach(section => {
                     section.classList.add('hidden');
                 });
-                
+
                 // Show selected content
-                document.getElementById(page + '-content').classList.remove('hidden');
-                
+                const contentSection = document.getElementById(page + '-content');
+                if (contentSection) {
+                    contentSection.classList.remove('hidden');
+                } else {
+                    // If content section doesn't exist (e.g. for external links), handle accordingly
+                    if (page === 'dashboard') {
+                        document.getElementById('dashboard-content').classList.remove('hidden');
+                    }
+                }
+
                 // Update page title
                 const titles = {
                     'dashboard': 'Dashboard',
@@ -372,8 +446,8 @@
                     'services': 'Hizmet Yönetimi',
                     'messages': 'Mesaj Yönetimi'
                 };
-                
-                document.getElementById('pageTitle').textContent = titles[page];
+
+                document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
                 document.getElementById('pageSubtitle').textContent = getPageSubtitle(page);
             });
         });
@@ -389,117 +463,95 @@
                 'services': 'Hizmetleri ve fiyatları yönet',
                 'messages': 'Mesajları görüntüle ve yanıtla'
             };
-            return subtitles[page];
+            return subtitles[page] || '';
         }
 
         // Logout functionality
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            localStorage.removeItem('adminToken');
-            localStorage.removeItem('adminUser');
-            window.location.href = 'login.html';
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            logout();
         });
 
         // Load dashboard data
         async function loadDashboardData() {
             try {
                 console.log('Dashboard verileri yükleniyor...');
-                
-                // Backend çalışmıyorsa mock data kullan
-                const mockData = {
-                    todayAppointments: 5,
-                    totalAppointments: 127,
-                    completedAppointments: 98,
-                    pendingAppointments: 29,
-                    totalRevenue: 15750,
-                    monthlyRevenue: 3250,
-                    recentAppointments: [
-                        {
-                            id: 1,
-                            patientName: 'Ahmet Yılmaz',
-                            date: '2024-01-15',
-                            time: '14:00',
-                            status: 'confirmed',
-                            service: 'Bireysel Terapi'
-                        },
-                        {
-                            id: 2,
-                            patientName: 'Ayşe Demir',
-                            date: '2024-01-15',
-                            time: '15:30',
-                            status: 'pending',
-                            service: 'Çift Terapisi'
-                        },
-                        {
-                            id: 3,
-                            patientName: 'Mehmet Kaya',
-                            date: '2024-01-16',
-                            time: '10:00',
-                            status: 'confirmed',
-                            service: 'Aile Terapisi'
-                        }
-                    ],
-                    weeklyStats: [
-                        { day: 'Pzt', appointments: 8 },
-                        { day: 'Sal', appointments: 12 },
-                        { day: 'Çar', appointments: 6 },
-                        { day: 'Per', appointments: 15 },
-                        { day: 'Cum', appointments: 9 },
-                        { day: 'Cmt', appointments: 4 },
-                        { day: 'Paz', appointments: 2 }
-                    ]
-                };
-                
-                updateDashboardStats(mockData);
-                updateCharts(mockData);
-                updateRecentAppointments(mockData.recentAppointments);
-                
-                console.log('Mock dashboard verileri yüklendi');
-                
+
+                const response = await fetch(`${API_URL}/admin/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    // Token expired or invalid
+                    logout();
+                    return;
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const data = result.data;
+
+                    // Map API data to UI format
+                    const uiData = {
+                        todayAppointments: data.appointments.today,
+                        weekAppointments: data.appointments.thisWeek,
+                        totalCustomers: data.users.total,
+                        monthlyRevenue: data.revenue.totalRevenue,
+                        weeklyStats: [
+                            // Mocking weekly stats for chart as API doesn't provide daily breakdown yet
+                            { day: 'Pzt', appointments: 8 },
+                            { day: 'Sal', appointments: 12 },
+                            { day: 'Çar', appointments: 6 },
+                            { day: 'Per', appointments: 15 },
+                            { day: 'Cum', appointments: 9 },
+                            { day: 'Cmt', appointments: 4 },
+                            { day: 'Paz', appointments: 2 }
+                        ],
+                        recentAppointments: data.recentAppointments
+                    };
+
+                    updateDashboardStats(uiData);
+                    updateCharts(uiData);
+                    updateRecentAppointments(uiData.recentAppointments);
+
+                    console.log('Dashboard verileri yüklendi');
+                } else {
+                    throw new Error(result.message || 'Veri yüklenemedi');
+                }
+
             } catch (error) {
                 console.error('Dashboard verileri yüklenirken hata:', error);
-                
-                // Hata durumunda da mock data göster
-                const fallbackData = {
-                    todayAppointments: 0,
-                    totalAppointments: 0,
-                    completedAppointments: 0,
-                    pendingAppointments: 0,
-                    totalRevenue: 0,
-                    monthlyRevenue: 0,
-                    recentAppointments: []
-                };
-                
-                updateDashboardStats(fallbackData);
-                updateCharts(fallbackData);
-                updateRecentAppointments(fallbackData.recentAppointments);
+                // Hata durumunda kullanıcıya bilgi ver veya mock data göster (opsiyonel)
             }
         }
 
         function updateDashboardStats(data) {
             try {
                 console.log('Dashboard istatistikleri güncelleniyor...');
-                
+
                 const todayAppointments = document.getElementById('todayAppointments');
                 const weekAppointments = document.getElementById('weekAppointments');
                 const totalCustomers = document.getElementById('totalCustomers');
                 const monthlyRevenue = document.getElementById('monthlyRevenue');
-                
+
                 if (todayAppointments) {
                     todayAppointments.textContent = data.todayAppointments || 0;
                 }
-                
+
                 if (weekAppointments) {
                     weekAppointments.textContent = data.weekAppointments || 0;
                 }
-                
+
                 if (totalCustomers) {
                     totalCustomers.textContent = data.totalCustomers || 0;
                 }
-                
+
                 if (monthlyRevenue) {
                     monthlyRevenue.textContent = `₺${data.monthlyRevenue || 0}`;
                 }
-                
+
                 console.log('Dashboard istatistikleri başarıyla güncellendi');
             } catch (error) {
                 console.error('Dashboard istatistikleri güncellenirken hata:', error);
@@ -509,10 +561,12 @@
         function updateCharts(data) {
             try {
                 console.log('Chartlar güncelleniyor...');
-                
+
                 // Appointments Chart
                 const appointmentsCanvas = document.getElementById('appointmentsChart');
                 if (appointmentsCanvas) {
+                    // Destroy existing chart if any (not implemented here but good practice)
+
                     const appointmentsCtx = appointmentsCanvas.getContext('2d');
                     new Chart(appointmentsCtx, {
                         type: 'line',
@@ -520,7 +574,7 @@
                             labels: data.weeklyStats ? data.weeklyStats.map(item => item.day) : ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
                             datasets: [{
                                 label: 'Randevular',
-                                data: data.weeklyStats ? data.weeklyStats.map(item => item.appointments) : [8, 12, 6, 15, 9, 4, 2],
+                                data: data.weeklyStats ? data.weeklyStats.map(item => item.appointments) : [0, 0, 0, 0, 0, 0, 0],
                                 borderColor: 'rgb(59, 130, 246)',
                                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                                 tension: 0.4
@@ -542,7 +596,7 @@
                         data: {
                             labels: ['Bireysel Terapi', 'Çift Terapisi', 'Aile Terapisi', 'Grup Terapisi'],
                             datasets: [{
-                                data: [35, 25, 20, 15],
+                                data: [35, 25, 20, 15], // Mock data for now
                                 backgroundColor: [
                                     'rgb(59, 130, 246)',
                                     'rgb(16, 185, 129)',
@@ -557,7 +611,7 @@
                         }
                     });
                 }
-                
+
                 console.log('Chartlar başarıyla güncellendi');
             } catch (error) {
                 console.error('Chart güncellenirken hata:', error);
@@ -567,48 +621,57 @@
         function updateRecentAppointments(appointments) {
             try {
                 console.log('Son randevular güncelleniyor...');
-                
+
                 const tbody = document.getElementById('recentAppointments');
                 if (!tbody) {
                     console.error('recentAppointments tablosu bulunamadı');
                     return;
                 }
-                
+
                 tbody.innerHTML = '';
-                
+
                 if (!appointments || appointments.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">Henüz randevu bulunmuyor</td></tr>';
                     return;
                 }
-                
+
                 appointments.forEach(appointment => {
                     const row = document.createElement('tr');
                     row.className = 'border-b border-gray-100 hover:bg-gray-50';
+
+                    // Format date and time
+                    const date = new Date(appointment.date).toLocaleDateString('tr-TR');
+                    const time = appointment.time;
+                    const patientName = appointment.user ? appointment.user.name : 'Bilinmeyen';
+                    const service = appointment.typeTurkish || appointment.type;
+                    const statusClass = getStatusClass(appointment.status);
+                    const statusText = appointment.statusTurkish || getStatusText(appointment.status);
+
                     row.innerHTML = `
-                        <td class="py-3 px-4">${appointment.patientName || appointment.customerName || 'Bilinmeyen'}</td>
-                        <td class="py-3 px-4">${new Date(appointment.date).toLocaleDateString('tr-TR')}</td>
-                        <td class="py-3 px-4">${appointment.time}</td>
-                        <td class="py-3 px-4">${appointment.service}</td>
+                        <td class="py-3 px-4">${patientName}</td>
+                        <td class="py-3 px-4">${date}</td>
+                        <td class="py-3 px-4">${time}</td>
+                        <td class="py-3 px-4">${service}</td>
                         <td class="py-3 px-4">
-                            <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(appointment.status)}">
-                                ${getStatusText(appointment.status)}
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${statusClass}">
+                                ${statusText}
                             </span>
                         </td>
                         <td class="py-3 px-4">
-                            <button class="text-blue-600 hover:text-blue-800 mr-2" onclick="viewAppointment('${appointment.id || appointment._id}')">
+                            <button class="text-blue-600 hover:text-blue-800 mr-2" onclick="viewAppointment('${appointment._id}')">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="text-green-600 hover:text-green-800 mr-2" onclick="approveAppointment('${appointment.id || appointment._id}')">
+                            <button class="text-green-600 hover:text-green-800 mr-2" onclick="approveAppointment('${appointment._id}')">
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button class="text-red-600 hover:text-red-800" onclick="rejectAppointment('${appointment.id || appointment._id}')">
+                            <button class="text-red-600 hover:text-red-800" onclick="rejectAppointment('${appointment._id}')">
                                 <i class="fas fa-times"></i>
                             </button>
                         </td>
                     `;
                     tbody.appendChild(row);
                 });
-                
+
                 console.log('Son randevular başarıyla güncellendi');
             } catch (error) {
                 console.error('Son randevular güncellenirken hata:', error);
@@ -654,16 +717,16 @@
         function checkAuth() {
             const token = localStorage.getItem('adminToken');
             const user = localStorage.getItem('adminUser');
-            
+
             console.log('Token:', token);
             console.log('User:', user);
-            
+
             if (!token || !user) {
                 console.log('Token veya user bulunamadı, login sayfasına yönlendiriliyor...');
                 window.location.href = 'login.html';
                 return false;
             }
-            
+
             console.log('Giriş başarılı, dashboard yükleniyor...');
             return true;
         }
@@ -691,7 +754,7 @@
         // Düzenleme seçeneklerini aktif et
         function enableEditOptions() {
             console.log('Düzenleme seçenekleri aktif ediliyor...');
-            
+
             // Tüm düzenleme butonlarını aktif et
             const editButtons = document.querySelectorAll('[onclick*="edit"], [onclick*="delete"], [onclick*="approve"], [onclick*="reject"]');
             editButtons.forEach(button => {
@@ -699,24 +762,24 @@
                 button.classList.remove('opacity-50', 'cursor-not-allowed');
                 button.classList.add('cursor-pointer', 'hover:opacity-80');
             });
-            
+
             // Form alanlarını aktif et
             const formInputs = document.querySelectorAll('input, textarea, select');
             formInputs.forEach(input => {
                 input.disabled = false;
                 input.classList.remove('opacity-50', 'cursor-not-allowed');
             });
-            
+
             console.log('Düzenleme seçenekleri aktif edildi!');
         }
 
         // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             if (checkAuth()) {
                 loadUserInfo();
                 loadDashboardData();
                 enableEditOptions();
-                
+
                 // Logout butonuna event listener ekle
                 const logoutBtn = document.getElementById('logoutBtn');
                 if (logoutBtn) {
@@ -726,4 +789,5 @@
         });
     </script>
 </body>
+
 </html>

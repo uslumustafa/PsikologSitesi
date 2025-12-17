@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,21 +11,25 @@
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
         .glass-effect {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
         .input-focus:focus {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+
         .btn-hover:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
+
 <body class="gradient-bg min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
         <!-- Logo ve Başlık -->
@@ -43,14 +48,9 @@
                     <label for="email" class="block text-sm font-medium text-white mb-2">
                         <i class="fas fa-envelope mr-2"></i>Email Adresi
                     </label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        required
+                    <input type="email" id="email" name="email" required
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-500 input-focus transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder="Email adresinizi girin"
-                    >
+                        placeholder="Email adresinizi girin">
                 </div>
 
                 <div>
@@ -58,19 +58,11 @@
                         <i class="fas fa-lock mr-2"></i>Şifre
                     </label>
                     <div class="relative">
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            required
+                        <input type="password" id="password" name="password" required
                             class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-500 input-focus transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-12"
-                            placeholder="Şifrenizi girin"
-                        >
-                        <button 
-                            type="button" 
-                            id="togglePassword"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                        >
+                            placeholder="Şifrenizi girin">
+                        <button type="button" id="togglePassword"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
@@ -78,7 +70,8 @@
 
                 <div class="flex items-center justify-between">
                     <label class="flex items-center">
-                        <input type="checkbox" class="rounded border-white/30 bg-white/20 text-purple-600 focus:ring-purple-500">
+                        <input type="checkbox"
+                            class="rounded border-white/30 bg-white/20 text-purple-600 focus:ring-purple-500">
                         <span class="ml-2 text-sm text-white/80">Beni hatırla</span>
                     </label>
                     <a href="#" class="text-sm text-white/80 hover:text-white transition-colors">
@@ -86,10 +79,8 @@
                     </a>
                 </div>
 
-                <button 
-                    type="submit"
-                    class="w-full bg-white text-purple-600 py-3 px-4 rounded-lg font-semibold btn-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/30"
-                >
+                <button type="submit"
+                    class="w-full bg-white text-purple-600 py-3 px-4 rounded-lg font-semibold btn-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/30">
                     <i class="fas fa-sign-in-alt mr-2"></i>Giriş Yap
                 </button>
             </form>
@@ -121,10 +112,10 @@
 
     <script>
         // Şifre göster/gizle
-        document.getElementById('togglePassword').addEventListener('click', function() {
+        document.getElementById('togglePassword').addEventListener('click', function () {
             const passwordInput = document.getElementById('password');
             const icon = this.querySelector('i');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 icon.classList.remove('fa-eye');
@@ -136,30 +127,54 @@
             }
         });
 
+        // API URL
+        const API_URL = 'http://localhost:5002/api';
+
         // Form gönderimi
-        document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+        document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const email = formData.get('email');
             const password = formData.get('password');
-            
-            // Basit giriş kontrolü (MongoDB olmadan)
-            if (email === 'admin@psikologonuruslu.com' && password === 'admin123') {
-                // Başarılı giriş
-                localStorage.setItem('adminToken', 'admin-login-token');
-                localStorage.setItem('adminUser', JSON.stringify({
-                    name: 'Admin',
-                    email: 'admin@psikologonuruslu.com',
-                    role: 'admin'
-                }));
-                
-                showSuccess('Giriş başarılı! Yönlendiriliyorsunuz...');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1500);
-            } else {
-                showError('Geçersiz email veya şifre!');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+
+            try {
+                // Loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Giriş Yapılıyor...';
+
+                const response = await fetch(`${API_URL}/auth/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Başarılı giriş
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('refreshToken', data.refreshToken);
+                    localStorage.setItem('adminUser', JSON.stringify(data.user));
+
+                    showSuccess('Giriş başarılı! Yönlendiriliyorsunuz...');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                } else {
+                    throw new Error(data.message || 'Giriş başarısız');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError(error.message || 'Bir hata oluştu. Lütfen tekrar deneyin.');
+            } finally {
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
             }
         });
 
@@ -167,31 +182,31 @@
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             const successDiv = document.getElementById('successMessage');
-            
+
             // Önceki mesajları gizle
             errorDiv.classList.add('hidden');
             successDiv.classList.add('hidden');
-            
+
             errorDiv.querySelector('span').textContent = message;
             errorDiv.classList.remove('hidden');
-            
+
             // 5 saniye sonra mesajı gizle
             setTimeout(() => {
                 errorDiv.classList.add('hidden');
             }, 5000);
         }
-        
+
         function showSuccess(message) {
             const errorDiv = document.getElementById('errorMessage');
             const successDiv = document.getElementById('successMessage');
-            
+
             // Önceki mesajları gizle
             errorDiv.classList.add('hidden');
             successDiv.classList.add('hidden');
-            
+
             successDiv.querySelector('span').textContent = message;
             successDiv.classList.remove('hidden');
-            
+
             // 5 saniye sonra mesajı gizle
             setTimeout(() => {
                 successDiv.classList.add('hidden');
@@ -199,7 +214,7 @@
         }
 
         // Sayfa yüklendiğinde token kontrolü
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             const token = localStorage.getItem('adminToken');
             if (token) {
                 // Token varsa dashboard'a yönlendir
@@ -208,4 +223,5 @@
         });
     </script>
 </body>
+
 </html>
