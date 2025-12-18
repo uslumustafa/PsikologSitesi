@@ -81,6 +81,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap"
         rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="canonical" href="https://psikologonuruslu.com" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -242,13 +245,7 @@
                 "İlişki Sorunları"
             ]
         },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.9",
-            "reviewCount": "756",
-            "bestRating": "5",
-            "worstRating": "1"
-        },
+
         "review": [
             {
                 "@type": "Review",
@@ -286,6 +283,10 @@
 </head>
 
 <body class="antialiased loading">
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
@@ -390,10 +391,7 @@
                                 <div class="text-3xl font-bold text-primary-700 font-serif" data-experience>2+</div>
                                 <div class="text-sm text-gray-500 uppercase tracking-wide">Yıl Deneyim</div>
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="text-3xl font-bold text-primary-700 font-serif" data-clients>756+</div>
-                                <div class="text-sm text-gray-500 uppercase tracking-wide">Mutlu Danışan</div>
-                            </div>
+
                             <div class="flex-1 min-w-0">
                                 <div class="text-3xl font-bold text-primary-700 font-serif" data-success-rate>%98</div>
                                 <div class="text-sm text-gray-500 uppercase tracking-wide">Memnuniyet</div>
@@ -484,7 +482,7 @@
                             Onur Uslu</h3>
                         <!-- BİLGİ: Kendi uzmanlık alanınızı ve felsefenizi buraya ekleyin. -->
                         <p class="text-gray-600 leading-relaxed mb-4" data-about-description>Selçuk Üniversitesi
-                            Psikoloji lisans bölümünden onur derecesi ile mezun oldum. 2 yıllık deneyimim boyunca 756
+                            Psikoloji lisans bölümünden onur derecesi ile mezun oldum. 2 yıllık deneyimim boyunca birçok
                             danışanıma hizmet verdim. Psikoloji alanındaki bilgi birikimimi Prof. Dr. Mehmet Hakan
                             Türkçapar ve ekibinden aldığım Bilişsel Davranışçı Terapi eğitimi ile pekiştirdim. Aynı
                             zamanda bilinçli farkındalık temelli terapi ve oyun terapisi eğitimleri almış biri olarak bu
@@ -652,10 +650,7 @@
             </div>
             <div class="container mx-auto px-6 relative z-10">
                 <div class="grid md:grid-cols-4 gap-8 text-center">
-                    <div class="animate-fadeIn" data-aos="fade-up" data-aos-delay="0">
-                        <div class="text-5xl font-serif font-bold mb-2 text-primary-200" data-clients>756</div>
-                        <div class="text-primary-100 font-medium tracking-wide">Mutlu Danışan</div>
-                    </div>
+
                     <div class="animate-fadeIn" data-aos="fade-up" data-aos-delay="100">
                         <div class="text-5xl font-serif font-bold mb-2 text-primary-200" data-experience>2</div>
                         <div class="text-primary-100 font-medium tracking-wide">Yıllık Deneyim</div>
@@ -810,8 +805,7 @@
                 <div class="text-center mt-12">
                     <a href="https://www.google.com/maps" target="_blank"
                         class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                            alt="Google" class="w-5 h-5 mr-2">
+                        <i class="fab fa-google text-lg mr-2"></i>
                         Tüm Google Yorumlarını Gör
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

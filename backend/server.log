@@ -1,0 +1,58 @@
+
+> psikolog-backend-api@1.0.0 start
+> node server.js
+
+Database connection error: MongooseServerSelectionError: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+    at _handleConnectionErrors (/Users/mustafauslu/.gemini/antigravity/scratch/PsikologSitesi/backend/node_modules/mongoose/lib/connection.js:1165:11)
+    at NativeConnection.openUri (/Users/mustafauslu/.gemini/antigravity/scratch/PsikologSitesi/backend/node_modules/mongoose/lib/connection.js:1096:11)
+    at async connectDB (/Users/mustafauslu/.gemini/antigravity/scratch/PsikologSitesi/backend/server.js:208:18)
+    at async startServer (/Users/mustafauslu/.gemini/antigravity/scratch/PsikologSitesi/backend/server.js:226:7) {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'Unknown',
+    servers: Map(1) { 'localhost:27017' => [ServerDescription] },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: null,
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  cause: TopologyDescription {
+    type: 'Unknown',
+    servers: Map(1) { 'localhost:27017' => [ServerDescription] },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: null,
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  }
+}
+⚠️  MongoDB bağlantısı kurulamadı, server mock data ile çalışacak
+💡 MongoDB cluster connection string ekleyerek gerçek veri kullanabilirsiniz
+Starting reminder jobs...
+Reminder jobs started successfully
+Server running on port 5002
+Environment: development
+API Documentation: http://localhost:5002/api-docs
+[0mGET /api/health [32m200[0m 10.580 ms - 104[0m
+MongoDB not connected, using mock admin login
+[0mPOST /api/auth/admin/login [32m200[0m 6.617 ms - 543[0m
+MongoDB not connected, using mock admin login
+[0mPOST /api/auth/admin/login [33m401[0m 1.143 ms - 61[0m
+[0mGET /api/blog [32m200[0m 0.387 ms - 3043[0m
+[0mPOST /api/blog [32m201[0m 1.694 ms - 294[0m
+[0mPOST /api/blog [33m401[0m 0.202 ms - 51[0m
+MongoDB not connected, using mock contact submission
+[0mPOST /api/contact [32m201[0m 0.898 ms - 254[0m
+[0mPOST /api/contact [33m400[0m 0.898 ms - 164[0m
+SIGTERM received. Shutting down gracefully...
+Process terminated

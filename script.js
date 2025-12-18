@@ -455,11 +455,11 @@ document.querySelectorAll('.btn-primary').forEach(button => {
 document.addEventListener('DOMContentLoaded', function () {
     // Hide loading screen after page load
     setTimeout(() => {
-        const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-            loadingScreen.classList.add('fade-out');
+        const preloader = document.getElementById('preloader');
+        if (preloader) {
+            preloader.classList.add('fade-out');
             setTimeout(() => {
-                loadingScreen.style.display = 'none';
+                preloader.style.display = 'none';
                 document.body.classList.remove('loading');
             }, 500);
         }

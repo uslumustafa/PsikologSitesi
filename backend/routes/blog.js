@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   limits: {
     fileSize: 5 * 1024 * 1024 // 5MB limit
@@ -25,7 +25,7 @@ const upload = multer({
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
-    
+
     if (mimetype && extname) {
       return cb(null, true);
     } else {
@@ -68,6 +68,39 @@ let blogs = [
     createdAt: new Date('2024-01-05'),
     updatedAt: new Date('2024-01-05'),
     published: true
+  },
+  {
+    id: 4,
+    title: 'Depresyon Belirtileri ve Tedavisi',
+    category: 'depresyon',
+    summary: 'Depresyonun yaygın belirtileri ve modern tedavi yöntemleri hakkında bilmeniz gerekenler...',
+    content: '<p>Depresyon, sadece üzgün hissetmekten çok daha fazlasıdır. Uyku bozuklukları, iştah değişiklikleri ve enerji kaybı gibi fiziksel belirtilerle de kendini gösterebilir. BDT, depresyon tedavisinde en etkili yöntemlerden biridir.</p>',
+    image: 'depression-symptoms.jpg',
+    createdAt: new Date('2024-01-20'),
+    updatedAt: new Date('2024-01-20'),
+    published: true
+  },
+  {
+    id: 5,
+    title: 'Çift Terapisinde İletişim Teknikleri',
+    category: 'cift-terapisi',
+    summary: 'İlişkinizde daha sağlıklı iletişim kurmak için kullanabileceğiniz pratik yöntemler...',
+    content: '<p>İlişkilerde en büyük sorun genellikle iletişim eksikliğidir. "Ben" dili kullanmak, aktif dinleme ve empati kurma gibi teknikler, çatışmaları çözmede büyük rol oynar.</p>',
+    image: 'couples-therapy.jpg',
+    createdAt: new Date('2024-01-25'),
+    updatedAt: new Date('2024-01-25'),
+    published: true
+  },
+  {
+    id: 6,
+    title: 'Online Terapi Etkili mi?',
+    category: 'genel',
+    summary: 'Dijital çağda terapiye erişim: Online terapinin avantajları ve bilimsel etkinliği...',
+    content: '<p>Yapılan araştırmalar, online terapinin yüz yüze terapi kadar etkili olduğunu göstermektedir. Özellikle yoğun çalışanlar veya ulaşım sorunu yaşayanlar için mükemmel bir alternatiftir.</p>',
+    image: 'online-therapy.jpg',
+    createdAt: new Date('2024-01-28'),
+    updatedAt: new Date('2024-01-28'),
+    published: true
   }
 ];
 
@@ -75,21 +108,21 @@ let blogs = [
 router.get('/', async (req, res) => {
   try {
     const { category, published, limit = 10, page = 1 } = req.query;
-    
+
     let filteredBlogs = [...blogs];
-    
+
     if (category) {
       filteredBlogs = filteredBlogs.filter(blog => blog.category === category);
     }
-    
+
     if (published !== undefined) {
       filteredBlogs = filteredBlogs.filter(blog => blog.published === (published === 'true'));
     }
-    
+
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + parseInt(limit);
     const paginatedBlogs = filteredBlogs.slice(startIndex, endIndex);
-    
+
     res.json({
       success: true,
       data: {
@@ -114,14 +147,14 @@ router.get('/:id', async (req, res) => {
   try {
     const blogId = parseInt(req.params.id);
     const blog = blogs.find(b => b.id === blogId);
-    
+
     if (!blog) {
       return res.status(404).json({
         success: false,
         message: 'Blog yazısı bulunamadı'
       });
     }
-    
+
     res.json({
       success: true,
       data: blog
@@ -139,14 +172,14 @@ router.get('/:id', async (req, res) => {
 router.post('/', authenticateToken, requireAdmin, upload.single('image'), async (req, res) => {
   try {
     const { title, category, summary, content, published = true } = req.body;
-    
+
     if (!title || !category || !summary || !content) {
       return res.status(400).json({
         success: false,
         message: 'Tüm gerekli alanları doldurun'
       });
     }
-    
+
     const newBlog = {
       id: blogs.length > 0 ? Math.max(...blogs.map(b => b.id)) + 1 : 1,
       title,
@@ -158,9 +191,9 @@ router.post('/', authenticateToken, requireAdmin, upload.single('image'), async 
       updatedAt: new Date(),
       published: published === 'true'
     };
-    
+
     blogs.push(newBlog);
-    
+
     res.status(201).json({
       success: true,
       message: 'Blog yazısı başarıyla oluşturuldu',
@@ -180,16 +213,16 @@ router.put('/:id', authenticateToken, requireAdmin, upload.single('image'), asyn
   try {
     const blogId = parseInt(req.params.id);
     const blogIndex = blogs.findIndex(b => b.id === blogId);
-    
+
     if (blogIndex === -1) {
       return res.status(404).json({
         success: false,
         message: 'Blog yazısı bulunamadı'
       });
     }
-    
+
     const { title, category, summary, content, published } = req.body;
-    
+
     // Update blog
     blogs[blogIndex] = {
       ...blogs[blogIndex],
@@ -201,7 +234,7 @@ router.put('/:id', authenticateToken, requireAdmin, upload.single('image'), asyn
       published: published !== undefined ? published === 'true' : blogs[blogIndex].published,
       updatedAt: new Date()
     };
-    
+
     res.json({
       success: true,
       message: 'Blog yazısı başarıyla güncellendi',
@@ -221,14 +254,14 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const blogId = parseInt(req.params.id);
     const blogIndex = blogs.findIndex(b => b.id === blogId);
-    
+
     if (blogIndex === -1) {
       return res.status(404).json({
         success: false,
         message: 'Blog yazısı bulunamadı'
       });
     }
-    
+
     // Remove image file if exists
     const blog = blogs[blogIndex];
     if (blog.image && blog.image !== 'default-blog.jpg') {
@@ -238,9 +271,9 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
         console.log('Image file not found:', err.message);
       }
     }
-    
+
     blogs.splice(blogIndex, 1);
-    
+
     res.json({
       success: true,
       message: 'Blog yazısı başarıyla silindi'
@@ -264,7 +297,7 @@ router.get('/categories/list', async (req, res) => {
       { value: 'cift-terapisi', label: 'Çift Terapisi' },
       { value: 'genel', label: 'Genel' }
     ];
-    
+
     res.json({
       success: true,
       data: categories
