@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const express = require('express');
 const { body, validationResult, query } = require('express-validator');
 const User = require('../models/User');
@@ -27,7 +28,7 @@ router.use(requireAdmin);
 router.get('/dashboard', async (req, res) => {
   try {
     // Check if MongoDB is connected
-    const mongoose = require('mongoose');
+    
     if (mongoose.connection.readyState !== 1) {
       console.log('MongoDB not connected, using mock dashboard data');
       return res.json({
@@ -224,7 +225,7 @@ router.get('/users', [
     }
 
     // Check if MongoDB is connected
-    const mongoose = require('mongoose');
+    
     if (mongoose.connection.readyState !== 1) {
       console.log('MongoDB not connected, using mock users data');
       return res.json({
@@ -249,6 +250,32 @@ router.get('/users', [
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+
+    // Check if MongoDB is connected
+    
+    if (mongoose.connection.readyState !== 1) {
+      console.log('MongoDB not connected, using mock users data');
+      const { mockUsers } = require('../utils/mockDb');
+      const allUsers = [...mockUsers, { _id: 'mock-admin-1', name: 'Admin User', email: 'admin@psikologonuruslu.com', role: 'admin', isActive: true }];
+      let filtered = allUsers.filter(u => !req.query.role || u.role === req.query.role);
+      if (req.query.isActive !== undefined) {
+        filtered = filtered.filter(u => u.isActive === (req.query.isActive === 'true'));
+      }
+      
+      const paginated = filtered.slice(skip, skip + limit);
+      return res.json({
+        success: true,
+        data: {
+          users: paginated,
+          pagination: {
+            page,
+            limit,
+            total: filtered.length,
+            pages: Math.ceil(filtered.length / limit)
+          }
+        }
+      });
+    }
 
     // Build filter
     const filter = {};
@@ -310,6 +337,33 @@ router.get('/users', [
  */
 router.get('/users/:id', async (req, res) => {
   try {
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockUsers, mockAppointments } = require('../utils/mockDb');
+      const allUsers = [...mockUsers, { _id: 'mock-admin-1', name: 'Admin User', email: 'admin@psikologonuruslu.com', role: 'admin', isActive: true }];
+      const user = allUsers.find(u => u._id === req.params.id);
+      
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      const appointments = mockAppointments.filter(a => {
+        const userId = a.user._id ? a.user._id.toString() : a.user.toString();
+        return userId === user._id.toString();
+      });
+
+      return res.json({
+        success: true,
+        data: {
+          user,
+          recentAppointments: appointments
+        }
+      });
+    }
+
     const user = await User.findById(req.params.id)
       .select('-password -emailVerificationToken -passwordResetToken -passwordResetExpires');
 
@@ -366,6 +420,44 @@ router.get('/users/:id', async (req, res) => {
  */
 router.patch('/users/:id/toggle-status', async (req, res) => {
   try {
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockUsers } = require('../utils/mockDb');
+      const allUsers = [...mockUsers, { _id: 'mock-admin-1', name: 'Admin User', email: 'admin@psikologonuruslu.com', role: 'admin', isActive: true }];
+      const userIndex = allUsers.findIndex(u => u._id === req.params.id);
+      
+      if (userIndex === -1) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+      
+      const user = allUsers[userIndex];
+      // Prevent admin from deactivating themselves
+      if (user._id.toString() === req.user._id.toString()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Cannot deactivate your own account'
+        });
+      }
+
+      user.isActive = !user.isActive;
+
+      const mainIndex = mockUsers.findIndex(u => u._id === user._id);
+      if (mainIndex !== -1) {
+        mockUsers[mainIndex].isActive = user.isActive;
+      }
+
+      return res.json({
+        success: true,
+        message: `User ${user.isActive ? 'activated' : 'deactivated'} successfully`,
+        data: {
+          user: user
+        }
+      });
+    }
+
     const user = await User.findById(req.params.id);
 
     if (!user) {
@@ -552,6 +644,32 @@ router.get('/appointments', [
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    
+    if (mongoose.connection.readyState !== 1) {
+      console.log('MongoDB not connected, using mock appointments data');
+      const { mockAppointments } = require('../utils/mockDb');
+      let filtered = [...mockAppointments];
+      if (req.query.status) filtered = filtered.filter(a => a.status === req.query.status);
+      if (req.query.date) {
+        const dateStr = new Date(req.query.date).toDateString();
+        filtered = filtered.filter(a => new Date(a.date).toDateString() === dateStr);
+      }
+      
+      const paginated = filtered.slice(skip, skip + limit);
+      return res.json({
+        success: true,
+        data: {
+          appointments: paginated,
+          pagination: {
+            page,
+            limit,
+            total: filtered.length,
+            pages: Math.ceil(filtered.length / limit)
+          }
+        }
+      });
+    }
+
     // Build filter
     const filter = {};
     if (req.query.status) filter.status = req.query.status;
@@ -644,7 +762,7 @@ router.post('/appointments', [
   body('date').isISO8601().withMessage('Valid date is required'),
   body('time').notEmpty().withMessage('Time is required'),
   body('type').isIn(['individual', 'couple', 'family', 'online', 'in-person']).withMessage('Valid type is required'),
-  body('price').isNumeric().withMessage('Price must be a number')
+  body('price').optional().isNumeric().withMessage('Price must be a number')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -657,17 +775,27 @@ router.post('/appointments', [
     }
 
     // Check if MongoDB is connected
-    const mongoose = require('mongoose');
+    
     if (mongoose.connection.readyState !== 1) {
       console.log('MongoDB not connected, using mock appointment creation');
+      const { mockAppointments, mockUsers } = require('../utils/mockDb');
+      const userObj = mockUsers.find(u => u._id === req.body.user) || { _id: req.body.user, name: 'Mock User', email: 'mock@example.com' };
+      const newApp = {
+        _id: 'mock-appointment-' + Date.now(),
+        user: userObj,
+        date: new Date(req.body.date),
+        time: req.body.time,
+        type: req.body.type,
+        price: req.body.price,
+        status: req.body.status || 'scheduled',
+        notes: req.body.notes,
+        createdAt: new Date()
+      };
+      mockAppointments.push(newApp);
       return res.status(201).json({
         success: true,
         message: 'Appointment created successfully (Mock Mode)',
-        data: {
-          _id: 'mock-appointment-' + Date.now(),
-          ...req.body,
-          user: { _id: req.body.user, name: 'Mock User', email: 'mock@example.com' }
-        }
+        data: newApp
       });
     }
 
@@ -957,8 +1085,8 @@ router.post('/email/broadcast', [
  */
 router.patch('/appointments/:id/status', [
   body('status')
-    .isIn(['pending', 'approved', 'rejected', 'completed', 'cancelled'])
-    .withMessage('Status must be pending, approved, rejected, completed, or cancelled')
+    .isIn(['pending', 'approved', 'rejected', 'completed', 'cancelled', 'scheduled', 'confirmed', 'no-show'])
+    .withMessage('Invalid status value')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -967,6 +1095,49 @@ router.patch('/appointments/:id/status', [
         success: false,
         message: 'Validation failed',
         errors: errors.array()
+      });
+    }
+
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockAppointments } = require('../utils/mockDb');
+      const appIndex = mockAppointments.findIndex(a => a._id === req.params.id);
+      if (appIndex === -1) {
+        return res.status(404).json({
+          success: false,
+          message: 'Appointment not found'
+        });
+      }
+      
+      const appointment = mockAppointments[appIndex];
+      const oldStatus = appointment.status;
+      appointment.status = req.body.status;
+      appointment.updatedBy = req.user._id;
+
+      if (appointment.user && appointment.user.email) {
+        try {
+          await sendEmail({
+            to: appointment.user.email,
+            subject: `Randevu Durumu Güncellendi - ${new Date(appointment.date).toLocaleDateString('tr-TR')}`,
+            template: 'appointment-status-update',
+            data: {
+              name: appointment.user.name,
+              date: new Date(appointment.date).toLocaleDateString('tr-TR'),
+              time: appointment.time,
+              oldStatus: oldStatus,
+              newStatus: appointment.status,
+              service: appointment.type || appointment.service
+            }
+          });
+        } catch (emailError) {
+          console.error('Failed to send status update email:', emailError);
+        }
+      }
+
+      return res.json({
+        success: true,
+        message: `Appointment status updated from ${oldStatus} to ${appointment.status}`,
+        data: appointment
       });
     }
 
@@ -1073,6 +1244,35 @@ router.get('/customers', [
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    // Check if MongoDB is connected
+    
+    if (mongoose.connection.readyState !== 1) {
+      console.log('MongoDB not connected, using mock customers data');
+      const { mockUsers } = require('../utils/mockDb');
+      let filtered = mockUsers.filter(u => u.role === 'user');
+      if (req.query.search) {
+        const term = req.query.search.toLowerCase();
+        filtered = filtered.filter(u => 
+          (u.name && u.name.toLowerCase().includes(term)) ||
+          (u.email && u.email.toLowerCase().includes(term))
+        );
+      }
+
+      const paginated = filtered.slice(skip, skip + limit);
+      return res.json({
+        success: true,
+        data: {
+          customers: paginated,
+          pagination: {
+            page,
+            limit,
+            total: filtered.length,
+            pages: Math.ceil(filtered.length / limit)
+          }
+        }
+      });
+    }
+
     // Build filter
     const filter = { role: 'user' };
     if (req.query.search) {
@@ -1137,6 +1337,41 @@ router.get('/customers', [
  */
 router.get('/customers/:id', async (req, res) => {
   try {
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockUsers, mockAppointments } = require('../utils/mockDb');
+      const customer = mockUsers.find(u => u._id === req.params.id && u.role === 'user');
+      if (!customer) {
+        return res.status(404).json({
+          success: false,
+          message: 'Customer not found'
+        });
+      }
+
+      const appointments = mockAppointments.filter(a => {
+        const userId = a.user._id ? a.user._id.toString() : a.user.toString();
+        return userId === customer._id.toString();
+      });
+
+      const stats = {};
+      appointments.forEach(a => {
+        stats[a.status] = (stats[a.status] || 0) + 1;
+      });
+      const appointmentStats = Object.keys(stats).map(k => ({
+        _id: k,
+        count: stats[k]
+      }));
+
+      return res.json({
+        success: true,
+        data: {
+          customer,
+          appointments,
+          appointmentStats
+        }
+      });
+    }
+
     const customer = await User.findById(req.params.id)
       .select('-password -emailVerificationToken -passwordResetToken -passwordResetExpires');
 

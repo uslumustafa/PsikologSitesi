@@ -389,9 +389,10 @@
         </div>
     </div>
 
+    <script src="/api-config.js"></script>
     <script>
         // API URL
-        const API_URL = 'http://localhost:5002/api';
+        const API_URL = window.API_URL || '/api';
 
         // Global variables
         let adminToken = localStorage.getItem('adminToken');

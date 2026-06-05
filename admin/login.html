@@ -110,6 +110,7 @@
         </div>
     </div>
 
+    <script src="/api-config.js"></script>
     <script>
         // Şifre göster/gizle
         document.getElementById('togglePassword').addEventListener('click', function () {
@@ -128,7 +129,7 @@
         });
 
         // API URL
-        const API_URL = 'http://localhost:5002/api';
+        const API_URL = window.API_URL || '/api';
 
         // Form gönderimi
         document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {

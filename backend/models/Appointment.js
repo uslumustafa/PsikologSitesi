@@ -86,7 +86,11 @@ const appointmentSchema = new mongoose.Schema({
     required: [true, 'Appointment date is required'],
     validate: {
       validator: function(value) {
-        return value > new Date();
+        // Only validate that the date is in the future for new appointments
+        if (this.isNew) {
+          return value > new Date();
+        }
+        return true;
       },
       message: 'Appointment date must be in the future'
     }
@@ -127,7 +131,8 @@ const appointmentSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: [true, 'Price is required'],
+    required: false,
+    default: 0,
     min: [0, 'Price cannot be negative']
   },
   paymentStatus: {
@@ -253,13 +258,15 @@ appointmentSchema.pre('save', function(next) {
     return next(new Error('Appointments can only be scheduled between 9:00 and 22:00'));
   }
 
-  // Check if appointment is not in the past
-  const appointmentDateTime = new Date(this.date);
-  const [hours, minutes] = this.time.split(':');
-  appointmentDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-  
-  if (appointmentDateTime <= new Date()) {
-    return next(new Error('Cannot schedule appointment in the past'));
+  // Check if appointment is not in the past (only for new appointments)
+  if (this.isNew) {
+    const appointmentDateTime = new Date(this.date);
+    const [hours, minutes] = this.time.split(':');
+    appointmentDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    
+    if (appointmentDateTime <= new Date()) {
+      return next(new Error('Cannot schedule appointment in the past'));
+    }
   }
 
   next();

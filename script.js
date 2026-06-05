@@ -11,7 +11,36 @@ const reveals = document.querySelectorAll('.section-fade-in');
 const testimonials = document.querySelectorAll('.testimonial-slide');
 
 // ===== ADMIN SETTINGS INTEGRATION =====
-function loadAdminSettings() {
+async function loadAdminSettings() {
+    try {
+        const response = await fetch(`${window.API_URL || '/api'}/site-settings`);
+        if (response.ok) {
+            const result = await response.json();
+            const backendSettings = result.data;
+            if (backendSettings) {
+                const settings = {
+                    siteTitle: backendSettings.general?.siteTitle,
+                    siteDescription: backendSettings.general?.siteDescription,
+                    phone: backendSettings.general?.phone,
+                    email: backendSettings.general?.email,
+                    address: backendSettings.general?.address,
+                    aboutTitle: backendSettings.about?.title,
+                    aboutDescription: backendSettings.about?.description,
+                    experienceYears: backendSettings.statistics?.experienceYears,
+                    totalClients: backendSettings.statistics?.totalClients,
+                    successRate: backendSettings.statistics?.successRate,
+                    services: backendSettings.services,
+                    mainPhoto: backendSettings.images?.mainPhoto,
+                    officePhoto: backendSettings.images?.officePhoto
+                };
+                applySettings(settings);
+                return;
+            }
+        }
+    } catch (error) {
+        console.log('Backend ayarları yüklenemedi, localStorage kontrol ediliyor:', error);
+    }
+
     try {
         // Admin panelinden kaydedilen ayarları oku
         const adminSettings = localStorage.getItem('adminSettings');
@@ -265,7 +294,7 @@ if (contactForm) {
             */
 
             // Option 2: Your custom backend
-            const response = await fetch('http://localhost:5002/api/contact', {
+            const response = await fetch(`${window.API_URL || '/api'}/contact`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -463,6 +492,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.body.classList.remove('loading');
             }, 500);
         }
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('fade-out');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                document.body.classList.remove('loading');
+            }, 500);
+        }
     }, 1000);
 
     // Initialize AOS or other libraries if needed
@@ -496,8 +533,17 @@ document.addEventListener('keydown', function (e) {
 // ===== PERFORMANCE MONITORING =====
 window.addEventListener('load', function () {
     // Log page load time
-    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-    console.log('Page load time:', loadTime + 'ms');
+    setTimeout(() => {
+        const nav = performance.getEntriesByType('navigation')[0];
+        if (nav) {
+            console.log('Page load time:', Math.round(nav.duration) + 'ms');
+        } else {
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            if (loadTime > 0) {
+                console.log('Page load time:', loadTime + 'ms');
+            }
+        }
+    }, 0);
 });
 
 // ===== COUNTER ANIMATION =====
@@ -677,25 +723,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// ===== SCROLL TO TOP FUNCTIONALITY =====
-const scrollToTopBtn = document.getElementById('scroll-to-top');
 
-// Show/hide scroll to top button based on scroll position
-window.addEventListener('scroll', function () {
-    if (window.scrollY > 300) {
-        scrollToTopBtn.classList.add('show');
-    } else {
-        scrollToTopBtn.classList.remove('show');
-    }
-});
-
-// Scroll to top when button is clicked
-scrollToTopBtn.addEventListener('click', function () {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-});
 
 // ===== PAGE LOAD =====
 document.addEventListener('DOMContentLoaded', function () {

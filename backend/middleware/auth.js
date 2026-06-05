@@ -113,9 +113,16 @@ const requireOwnershipOrAdmin = (req, res, next) => {
 const requireAppointmentAccess = async (req, res, next) => {
   try {
     const appointmentId = req.params.id;
-    const Appointment = require('../models/Appointment');
+    const mongoose = require('mongoose');
+    let appointment;
 
-    const appointment = await Appointment.findById(appointmentId);
+    if (mongoose.connection.readyState !== 1) {
+      const { mockAppointments } = require('../utils/mockDb');
+      appointment = mockAppointments.find(a => a._id === appointmentId);
+    } else {
+      const Appointment = require('../models/Appointment');
+      appointment = await Appointment.findById(appointmentId);
+    }
 
     if (!appointment) {
       return res.status(404).json({
@@ -131,7 +138,8 @@ const requireAppointmentAccess = async (req, res, next) => {
     }
 
     // User can only access their own appointments
-    if (appointment.user.toString() === req.user._id.toString()) {
+    const userId = appointment.user._id ? appointment.user._id.toString() : appointment.user.toString();
+    if (userId === req.user._id.toString()) {
       req.appointment = appointment;
       return next();
     }

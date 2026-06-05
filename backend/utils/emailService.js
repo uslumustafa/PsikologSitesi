@@ -4,6 +4,16 @@ const fs = require('fs').promises;
 
 // Create transporter
 const createTransporter = () => {
+  if (process.env.NODE_ENV === 'test') {
+    return {
+      sendMail: async (options) => {
+        return { messageId: 'mock-email-id' };
+      },
+      verify: async () => {
+        return true;
+      }
+    };
+  }
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: process.env.SMTP_PORT || 587,
@@ -239,6 +249,89 @@ const emailTemplates = {
           </div>
           <div class="footer">
             <p>Bu email otomatik olarak gönderilmiştir.</p>
+            <p>Psikolog Onur Uslu | Gebze, Kocaeli | +90 553 026 37 74</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `
+  },
+  
+  broadcast: {
+    subject: 'Duyuru - Psikolog Onur Uslu',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{subject}}</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #6366F1; color: white; padding: 20px; text-align: center; }
+          .content { padding: 20px; background: #f9f9f9; }
+          .footer { padding: 20px; text-align: center; color: #666; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Psikolog Onur Uslu</h1>
+            <p>Duyuru</p>
+          </div>
+          <div class="content">
+            <h2>Merhaba {{name}},</h2>
+            <p>{{message}}</p>
+          </div>
+          <div class="footer">
+            <p>Bu email otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.</p>
+            <p>Psikolog Onur Uslu | Gebze, Kocaeli | +90 553 026 37 74</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `
+  },
+
+  'appointment-status-update': {
+    subject: 'Randevu Durumu Güncellendi - Psikolog Onur Uslu',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Randevu Güncellemesi</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #3B82F6; color: white; padding: 20px; text-align: center; }
+          .content { padding: 20px; background: #f9f9f9; }
+          .details { background: white; padding: 20px; border-radius: 5px; margin: 20px 0; }
+          .footer { padding: 20px; text-align: center; color: #666; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Psikolog Onur Uslu</h1>
+            <p>Randevu Durumu Güncellendi</p>
+          </div>
+          <div class="content">
+            <h2>Merhaba {{name}},</h2>
+            <p>Randevunuzun durumu güncellenmiştir. Güncel randevu detayları:</p>
+            <div class="details">
+              <p><strong>Tarih:</strong> {{date}}</p>
+              <p><strong>Saat:</strong> {{time}}</p>
+              <p><strong>Hizmet:</strong> {{service}}</p>
+              <p><strong>Eski Durum:</strong> {{oldStatus}}</p>
+              <p><strong>Yeni Durum:</strong> {{newStatus}}</p>
+            </div>
+            <p>Herhangi bir sorunuz varsa bizimle iletişime geçebilirsiniz.</p>
+          </div>
+          <div class="footer">
+            <p>Bu email otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.</p>
             <p>Psikolog Onur Uslu | Gebze, Kocaeli | +90 553 026 37 74</p>
           </div>
         </div>

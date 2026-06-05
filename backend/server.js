@@ -35,9 +35,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com", "https://unpkg.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://unpkg.com", "https://www.googletagmanager.com", "https://cdn.tailwindcss.com"],
+      fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "http://localhost:5002", "http://127.0.0.1:5002", "https:"],
+      frameSrc: ["'self'", "https://www.googletagmanager.com"]
     },
   },
 }));
@@ -158,8 +161,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Root endpoint
-app.get('/', (req, res) => {
+// Root endpoint relocated to /api to allow static frontend serving on /
+app.get('/api', (req, res) => {
   res.status(200).json({
     message: 'Psikolog Onur Uslu API',
     version: '1.0.0',
@@ -190,6 +193,10 @@ app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });
+
+// Serve static frontend files from parent directory
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../')));
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -263,7 +270,9 @@ const startServer = async () => {
   }
 };
 
-// Start server even without MongoDB for testing
-startServer();
+// Start server only when not running tests
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
 
 module.exports = app;

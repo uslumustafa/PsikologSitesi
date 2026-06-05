@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
@@ -63,18 +64,25 @@ router.post('/', [
         }
 
         // Check if MongoDB is connected
-        const mongoose = require('mongoose');
+        
         if (mongoose.connection.readyState !== 1) {
             console.log('MongoDB not connected, using mock contact submission');
+            const { mockContacts } = require('../utils/mockDb');
+            const newContact = {
+                _id: 'mock-message-' + Date.now(),
+                name: req.body.name,
+                email: req.body.email,
+                phone: req.body.phone,
+                subject: req.body.subject,
+                message: req.body.message,
+                createdAt: new Date(),
+                read: false
+            };
+            mockContacts.push(newContact);
             return res.status(201).json({
                 success: true,
                 message: 'Message sent successfully (Mock Mode)',
-                data: {
-                    _id: 'mock-message-' + Date.now(),
-                    ...req.body,
-                    createdAt: new Date(),
-                    read: false
-                }
+                data: newContact
             });
         }
 
@@ -119,44 +127,14 @@ router.post('/', [
 router.get('/', auth.authenticateToken, auth.requireAdmin, async (req, res) => {
     try {
         // Check if MongoDB is connected
-        const mongoose = require('mongoose');
+        
         if (mongoose.connection.readyState !== 1) {
             console.log('MongoDB not connected, using mock messages');
+            const { mockContacts } = require('../utils/mockDb');
             return res.json({
                 success: true,
                 data: {
-                    messages: [
-                        {
-                            _id: 'mock-msg-1',
-                            name: 'Ahmet Yılmaz',
-                            email: 'ahmet@example.com',
-                            phone: '05551112233',
-                            subject: 'Randevu Hakkında',
-                            message: 'Merhaba, online terapi seansları hakkında bilgi almak istiyorum.',
-                            createdAt: new Date(Date.now() - 86400000), // 1 day ago
-                            read: true
-                        },
-                        {
-                            _id: 'mock-msg-2',
-                            name: 'Ayşe Demir',
-                            email: 'ayse@example.com',
-                            phone: '05554445566',
-                            subject: 'Fiyat Bilgisi',
-                            message: 'Seans ücretlerinizi öğrenebilir miyim?',
-                            createdAt: new Date(Date.now() - 172800000), // 2 days ago
-                            read: false
-                        },
-                        {
-                            _id: 'mock-msg-3',
-                            name: 'Mehmet Kaya',
-                            email: 'mehmet@example.com',
-                            phone: '',
-                            subject: 'Ofis Konumu',
-                            message: 'Gebze ofisiniz tam olarak nerede?',
-                            createdAt: new Date(Date.now() - 259200000), // 3 days ago
-                            read: false
-                        }
-                    ]
+                    messages: mockContacts
                 }
             });
         }
@@ -175,6 +153,97 @@ router.get('/', auth.authenticateToken, auth.requireAdmin, async (req, res) => {
             success: false,
             message: 'Failed to retrieve messages'
         });
+    }
+});
+
+
+/**
+ * @swagger
+ * /api/contact/{id}/read:
+ *   patch:
+ *     summary: Mark message as read (Admin only)
+ *     tags: [Contact]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Message marked as read
+ *       404:
+ *         description: Message not found
+ */
+router.patch('/:id/read', auth.authenticateToken, auth.requireAdmin, async (req, res) => {
+    try {
+        if (mongoose.connection.readyState !== 1) {
+            const { mockContacts } = require('../utils/mockDb');
+            const idx = mockContacts.findIndex(m => m._id === req.params.id);
+            if (idx === -1) {
+                return res.status(404).json({ success: false, message: 'Message not found' });
+            }
+            mockContacts[idx].read = true;
+            return res.json({ success: true, message: 'Message marked as read', data: mockContacts[idx] });
+        }
+
+        const message = await Contact.findByIdAndUpdate(
+            req.params.id,
+            { read: true },
+            { new: true }
+        );
+        if (!message) {
+            return res.status(404).json({ success: false, message: 'Message not found' });
+        }
+        res.json({ success: true, message: 'Message marked as read', data: message });
+    } catch (error) {
+        console.error('Mark read error:', error);
+        res.status(500).json({ success: false, message: 'Failed to update message' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/contact/{id}:
+ *   delete:
+ *     summary: Delete a message (Admin only)
+ *     tags: [Contact]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Message deleted
+ *       404:
+ *         description: Message not found
+ */
+router.delete('/:id', auth.authenticateToken, auth.requireAdmin, async (req, res) => {
+    try {
+        if (mongoose.connection.readyState !== 1) {
+            const { mockContacts } = require('../utils/mockDb');
+            const idx = mockContacts.findIndex(m => m._id === req.params.id);
+            if (idx === -1) {
+                return res.status(404).json({ success: false, message: 'Message not found' });
+            }
+            mockContacts.splice(idx, 1);
+            return res.json({ success: true, message: 'Message deleted' });
+        }
+
+        const message = await Contact.findByIdAndDelete(req.params.id);
+        if (!message) {
+            return res.status(404).json({ success: false, message: 'Message not found' });
+        }
+        res.json({ success: true, message: 'Message deleted' });
+    } catch (error) {
+        console.error('Delete message error:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete message' });
     }
 });
 

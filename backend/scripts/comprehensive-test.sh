@@ -61,7 +61,7 @@ if [[ $CREATE_BLOG_RES == *"success\":true"* ]]; then print_result 0 "Create Blo
 FAIL_BLOG_RES=$(curl -s -X POST "$API_URL/blog" \
     -H "Content-Type: application/json" \
     -d '{"title": "Fail Blog"}')
-if [[ $FAIL_BLOG_RES == *"No token provided"* ]] || [[ $FAIL_BLOG_RES == *"Unauthorized"* ]]; then print_result 0 "Create Blog (Unauthorized Check)"; else print_result 1 "Create Blog (Unauthorized Check)" "$FAIL_BLOG_RES"; fi
+if [[ $FAIL_BLOG_RES == *"No token provided"* ]] || [[ $FAIL_BLOG_RES == *"Unauthorized"* ]] || [[ $FAIL_BLOG_RES == *"Access token required"* ]]; then print_result 0 "Create Blog (Unauthorized Check)"; else print_result 1 "Create Blog (Unauthorized Check)" "$FAIL_BLOG_RES"; fi
 
 # 4. Contact Tests
 echo "--- Contact Tests ---"

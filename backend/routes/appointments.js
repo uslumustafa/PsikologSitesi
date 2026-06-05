@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const express = require('express');
 const { body, validationResult, query } = require('express-validator');
 const Appointment = require('../models/Appointment');
@@ -72,6 +73,37 @@ router.get('/', authenticateToken, [
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockAppointments } = require('../utils/mockDb');
+      let filtered = [...mockAppointments];
+      if (req.user.role !== 'admin') {
+        filtered = filtered.filter(a => {
+          const userId = a.user._id ? a.user._id.toString() : a.user.toString();
+          return userId === req.user._id.toString();
+        });
+      }
+      if (req.query.status) filtered = filtered.filter(a => a.status === req.query.status);
+      if (req.query.type) filtered = filtered.filter(a => a.type === req.query.type);
+      if (req.query.date) {
+        const dateStr = new Date(req.query.date).toDateString();
+        filtered = filtered.filter(a => new Date(a.date).toDateString() === dateStr);
+      }
+      const paginated = filtered.slice(skip, skip + limit);
+      return res.json({
+        success: true,
+        data: {
+          appointments: paginated,
+          pagination: {
+            page,
+            limit,
+            total: filtered.length,
+            pages: Math.ceil(filtered.length / limit)
+          }
+        }
+      });
+    }
 
     // Build filter object
     const filter = {};
@@ -232,6 +264,7 @@ router.post('/', authenticateToken, [
     .isInt({ min: 30, max: 120 })
     .withMessage('Duration must be between 30 and 120 minutes'),
   body('price')
+    .optional()
     .isFloat({ min: 0 })
     .withMessage('Price must be a positive number'),
   body('notes')
@@ -250,6 +283,65 @@ router.post('/', authenticateToken, [
     }
 
     const { date, time, type, duration = 50, notes, price } = req.body;
+
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockAppointments, mockUsers } = require('../utils/mockDb');
+      const conflict = mockAppointments.find(a => 
+        new Date(a.date).toDateString() === new Date(date).toDateString() &&
+        a.time === time &&
+        ['scheduled', 'confirmed'].includes(a.status)
+      );
+
+      if (conflict) {
+        return res.status(409).json({
+          success: false,
+          message: 'Time slot is already taken'
+        });
+      }
+
+      const mockApp = {
+        _id: 'mock-app-' + Date.now(),
+        user: mockUsers.find(u => u._id === req.user._id.toString()) || req.user,
+        date: new Date(date),
+        time,
+        type,
+        duration,
+        notes,
+        price,
+        status: 'scheduled',
+        reminders: [],
+        createdAt: new Date()
+      };
+      
+      mockAppointments.push(mockApp);
+
+      try {
+        await sendEmail({
+          to: req.user.email,
+          subject: 'Randevu Onayı - Psikolog Onur Uslu',
+          template: 'appointmentConfirmation',
+          data: {
+            name: req.user.name,
+            date: new Date(date).toLocaleDateString('tr-TR'),
+            time,
+            type,
+            duration,
+            price
+          }
+        });
+      } catch (emailError) {
+        console.error('Confirmation email failed:', emailError);
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: 'Appointment created successfully',
+        data: {
+          appointment: mockApp
+        }
+      });
+    }
 
     // Check for time slot conflicts
     const existingAppointment = await Appointment.findOne({
@@ -420,8 +512,8 @@ router.put('/:id', authenticateToken, requireAppointmentAccess, [
       });
     }
 
-    // Check if appointment can be modified
-    if (!req.appointment.canBeRescheduled()) {
+    // Check if appointment can be modified (bypass for admin)
+    if (req.user.role !== 'admin' && !req.appointment.canBeRescheduled()) {
       return res.status(403).json({
         success: false,
         message: 'Appointment cannot be modified less than 12 hours before scheduled time'
@@ -429,6 +521,52 @@ router.put('/:id', authenticateToken, requireAppointmentAccess, [
     }
 
     const { date, time, type, duration, notes, price } = req.body;
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockAppointments } = require('../utils/mockDb');
+      if (date || time) {
+        const checkDate = date ? new Date(date) : req.appointment.date;
+        const checkTime = time || req.appointment.time;
+        const conflict = mockAppointments.find(a => 
+          a._id !== req.appointment._id &&
+          new Date(a.date).toDateString() === new Date(checkDate).toDateString() &&
+          a.time === checkTime &&
+          ['scheduled', 'confirmed'].includes(a.status)
+        );
+
+        if (conflict) {
+          return res.status(409).json({
+            success: false,
+            message: 'Time slot is already taken'
+          });
+        }
+      }
+
+      const appIndex = mockAppointments.findIndex(a => a._id === req.appointment._id);
+      if (appIndex !== -1) {
+        const original = mockAppointments[appIndex];
+        mockAppointments[appIndex] = {
+          ...original,
+          date: date ? new Date(date) : original.date,
+          time: time || original.time,
+          type: type || original.type,
+          duration: duration || original.duration,
+          notes: notes !== undefined ? notes : original.notes,
+          price: price || original.price,
+          updatedAt: new Date()
+        };
+        req.appointment = mockAppointments[appIndex];
+      }
+
+      return res.json({
+        success: true,
+        message: 'Appointment updated successfully',
+        data: {
+          appointment: req.appointment
+        }
+      });
+    }
+
     const updateData = {};
 
     // Check for time slot conflicts if time is being changed
@@ -533,8 +671,8 @@ router.post('/:id/cancel', authenticateToken, requireAppointmentAccess, [
       });
     }
 
-    // Check if appointment can be cancelled
-    if (!req.appointment.canBeCancelled()) {
+    // Check if appointment can be cancelled (bypass for admin)
+    if (req.user.role !== 'admin' && !req.appointment.canBeCancelled()) {
       return res.status(403).json({
         success: false,
         message: 'Appointment cannot be cancelled less than 24 hours before scheduled time'
@@ -542,6 +680,44 @@ router.post('/:id/cancel', authenticateToken, requireAppointmentAccess, [
     }
 
     const { reason } = req.body;
+
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockAppointments } = require('../utils/mockDb');
+      const appIndex = mockAppointments.findIndex(a => a._id === req.appointment._id);
+      if (appIndex !== -1) {
+        mockAppointments[appIndex].status = 'cancelled';
+        mockAppointments[appIndex].cancellationReason = reason;
+        mockAppointments[appIndex].cancelledAt = new Date();
+        mockAppointments[appIndex].cancelledBy = req.user._id;
+        req.appointment = mockAppointments[appIndex];
+      }
+
+      try {
+        await sendEmail({
+          to: req.appointment.user.email,
+          subject: 'Randevu İptali - Psikolog Onur Uslu',
+          template: 'appointmentCancellation',
+          data: {
+            name: req.appointment.user.name,
+            date: new Date(req.appointment.date).toLocaleDateString('tr-TR'),
+            time: req.appointment.time,
+            type: req.appointment.type,
+            reason
+          }
+        });
+      } catch (emailError) {
+        console.error('Cancellation email failed:', emailError);
+      }
+
+      return res.json({
+        success: true,
+        message: 'Appointment cancelled successfully',
+        data: {
+          appointment: req.appointment
+        }
+      });
+    }
 
     // Cancel appointment
     await req.appointment.cancel(reason, req.user._id);
@@ -607,6 +783,23 @@ router.post('/:id/cancel', authenticateToken, requireAppointmentAccess, [
  */
 router.post('/:id/confirm', authenticateToken, requireAdmin, requireAppointmentAccess, async (req, res) => {
   try {
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockAppointments } = require('../utils/mockDb');
+      const appIndex = mockAppointments.findIndex(a => a._id === req.appointment._id);
+      if (appIndex !== -1) {
+        mockAppointments[appIndex].status = 'confirmed';
+        req.appointment = mockAppointments[appIndex];
+      }
+      return res.json({
+        success: true,
+        message: 'Appointment confirmed successfully',
+        data: {
+          appointment: req.appointment
+        }
+      });
+    }
+
     await req.appointment.confirm();
     await req.appointment.populate('user', 'name email phone');
 
@@ -692,6 +885,28 @@ router.post('/:id/complete', authenticateToken, requireAdmin, requireAppointment
 
     const { sessionNotes, followUpRequired, followUpDate } = req.body;
 
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockAppointments } = require('../utils/mockDb');
+      const appIndex = mockAppointments.findIndex(a => a._id === req.appointment._id);
+      if (appIndex !== -1) {
+        mockAppointments[appIndex].status = 'completed';
+        mockAppointments[appIndex].sessionNotes = sessionNotes;
+        if (followUpRequired && followUpDate) {
+          mockAppointments[appIndex].followUpRequired = followUpRequired;
+          mockAppointments[appIndex].followUpDate = new Date(followUpDate);
+        }
+        req.appointment = mockAppointments[appIndex];
+      }
+      return res.json({
+        success: true,
+        message: 'Appointment completed successfully',
+        data: {
+          appointment: req.appointment
+        }
+      });
+    }
+
     await req.appointment.complete(sessionNotes);
     
     if (followUpRequired && followUpDate) {
@@ -752,6 +967,34 @@ router.get('/available-slots', authenticateToken, [
         success: false,
         message: 'Validation failed',
         errors: errors.array()
+      });
+    }
+
+    
+    if (mongoose.connection.readyState !== 1) {
+      const { mockAppointments } = require('../utils/mockDb');
+      const date = new Date(req.query.date);
+      const existing = mockAppointments.filter(a => 
+        new Date(a.date).toDateString() === date.toDateString() &&
+        ['scheduled', 'confirmed'].includes(a.status)
+      );
+
+      const allSlots = [];
+      for (let hour = 9; hour < 22; hour++) {
+        for (let minute = 0; minute < 60; minute += 50) {
+          const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+          allSlots.push(timeString);
+        }
+      }
+
+      const takenSlots = existing.map(apt => apt.time);
+      const availableSlots = allSlots.filter(slot => !takenSlots.includes(slot));
+
+      return res.json({
+        success: true,
+        data: {
+          availableSlots
+        }
       });
     }
 
