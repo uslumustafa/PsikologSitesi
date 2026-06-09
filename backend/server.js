@@ -47,8 +47,29 @@ app.use(helmet({
 }));
 
 // CORS configuration
+// Frontend (Cloudflare Pages) ve backend (Render) ayrı origin'lerde olduğu için
+// bilinen origin'lere + *.pages.dev (Cloudflare) önizleme adreslerine izin veriyoruz.
+const staticAllowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://gebzepsikologonuruslu.com',
+  'https://www.gebzepsikologonuruslu.com',
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'http://127.0.0.1:5500'
+].filter(Boolean);
+
 app.use(cors({
-  origin: [process.env.FRONTEND_URL || 'http://localhost:3000', 'http://localhost:8080'],
+  origin: function (origin, callback) {
+    // origin yoksa (curl, sunucu-sunucu, mobil) izin ver
+    if (!origin) return callback(null, true);
+    let hostname = '';
+    try { hostname = new URL(origin).hostname; } catch (e) { /* ignore */ }
+    const isAllowed =
+      staticAllowedOrigins.includes(origin) ||
+      /\.pages\.dev$/.test(hostname) ||      // Cloudflare Pages önizleme/yayın adresleri
+      /\.onrender\.com$/.test(hostname);     // backend kendi adresinden istek atarsa
+    return callback(null, isAllowed);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
