@@ -225,9 +225,32 @@ app.get('/api-docs.json', (req, res) => {
   res.send(swaggerSpec);
 });
 
-// Serve static frontend files from parent directory
+// Serve static frontend files from parent directory.
+// Render rootDir=backend olduğundan parent dizin repo köküdür ve içinde `backend/`
+// klasörü de bulunur. Aşağıdaki koruma olmadan kaynak kod ve dosya-tabanlı iletişim
+// verisi (KVKK kapsamındaki kişisel veri) HTTP üzerinden indirilebilir hale gelir.
 const path = require('path');
-app.use(express.static(path.join(__dirname, '../')));
+
+// Block direct access to server internals via the static layer.
+app.use((req, res, next) => {
+  let decodedPath = req.path;
+  try { decodedPath = decodeURIComponent(req.path); } catch (e) { /* keep raw */ }
+  const normalized = decodedPath.toLowerCase().replace(/\\/g, '/');
+  const isBlocked =
+    normalized === '/backend' ||
+    normalized.startsWith('/backend/') ||
+    normalized.includes('/.env') ||
+    normalized.endsWith('.env') ||
+    normalized.startsWith('/.git');
+  if (isBlocked) {
+    return res.status(404).json({ success: false, message: 'Route not found' });
+  }
+  next();
+});
+
+app.use(express.static(path.join(__dirname, '../'), {
+  dotfiles: 'ignore' // never serve .env, .git, .htaccess, etc.
+}));
 
 // 404 handler
 app.use('*', (req, res) => {
