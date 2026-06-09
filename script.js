@@ -740,8 +740,16 @@ function _escapeHtml(s) {
 
 function _blogImage(b) {
     const fallback = 'images/cognitive-behavioral-therapy.jpg';
-    if (!b.image) return fallback;
-    return b.image.startsWith('http') ? b.image : `images/${b.image}`;
+    if (!b || !b.image) return fallback;
+    if (b.image.startsWith('http')) return b.image;
+    // Admin panelinden YÜKLENEN görseller backend (Render) diskinde "image-..." adıyla durur;
+    // bunları backend'den okumalıyız (frontend Cloudflare'de, o dosya orada yok).
+    // Repoya işlenmiş görseller ise hızlıca Cloudflare'den servis edilir.
+    if (b.image.startsWith('image-')) {
+        const base = (window.API_URL || '').replace(/\/api\/?$/, '');
+        return base ? `${base}/images/${b.image}` : `images/${b.image}`;
+    }
+    return `images/${b.image}`;
 }
 
 async function loadBlogs() {
