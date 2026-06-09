@@ -370,12 +370,12 @@ if (heroTitle) {
         if (index < originalText.length) {
             heroTitle.innerHTML = originalText.slice(0, index + 1);
             index++;
-            setTimeout(typeWriter, 50);
+            setTimeout(typeWriter, 22);
         }
     }
 
     // Start typing after page load
-    setTimeout(typeWriter, 500);
+    setTimeout(typeWriter, 250);
 }
 
 // ===== TESTIMONIAL SLIDER =====
