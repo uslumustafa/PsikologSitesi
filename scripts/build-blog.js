@@ -50,10 +50,11 @@ async function loadPosts() {
   try {
     const live = await fetchLivePosts();
     console.log(`🌐 Canlı API'den ${live.length} yayınlanmış yazı alındı (${API_URL}).`);
-    return live;
+    return { posts: live, fromLive: true };
   } catch (err) {
     console.warn(`⚠️  Canlı API okunamadı (${err.message}); repo seed verisine düşülüyor.`);
-    return require(path.join(ROOT, 'backend', 'blog-posts.js')).filter(p => p.published !== false);
+    const seed = require(path.join(ROOT, 'backend', 'blog-posts.js')).filter(p => p.published !== false);
+    return { posts: seed, fromLive: false };
   }
 }
 
@@ -327,7 +328,23 @@ function buildSitemap() {
 let posts = [];
 
 (async function main() {
-  posts = withSlugs(await loadPosts());
+  const { posts: raw, fromLive } = await loadPosts();
+
+  // Güvenlik: API geçici erişilemez VE zaten üretilmiş sayfalar varsa, mevcut
+  // (canlı veriden üretilmiş) sayfaları seed ile EZME — olduğu gibi koru ve çık.
+  const hasExisting = fs.existsSync(path.join(BLOG_DIR, 'index.html'));
+  if (!fromLive && hasExisting) {
+    console.warn('⏭️  Canlı veri yok ve mevcut sayfalar duruyor; üretim atlandı (sayfalar korunuyor).');
+    return;
+  }
+
+  posts = withSlugs(raw);
+
+  // Canlı veriden üretiyorsak, silinen/yayından kaldırılan yazıların artık
+  // sayfası kalmasın diye blog dizinini sıfırdan yaz.
+  if (fromLive && fs.existsSync(BLOG_DIR)) {
+    fs.rmSync(BLOG_DIR, { recursive: true, force: true });
+  }
 
   let written = 0;
   fs.mkdirSync(BLOG_DIR, { recursive: true });
