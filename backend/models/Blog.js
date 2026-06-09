@@ -11,6 +11,11 @@ const blogSchema = new mongoose.Schema({
     required: [true, 'Category is required'],
     trim: true
   },
+  slug: {
+    type: String,
+    trim: true,
+    index: true
+  },
   summary: {
     type: String,
     required: [true, 'Summary is required'],

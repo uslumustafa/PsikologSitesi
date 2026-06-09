@@ -2,6 +2,7 @@
 .gitignore
 _worker.js
 backend
+scripts
 render.yaml
 wrangler.jsonc
 .assetsignore

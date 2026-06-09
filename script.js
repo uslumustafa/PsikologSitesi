@@ -738,6 +738,19 @@ function _escapeHtml(s) {
     }[c]));
 }
 
+// Statik blog sayfası URL'i için slug üret.
+// Sunucu (routes/blog.js) ve üretici (scripts/build-blog.js) ile AYNI algoritma.
+function _slugify(str) {
+    const map = { 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u', 'İ': 'i' };
+    return String(str || '')
+        .replace(/[çğıöşüİ]/g, c => map[c] || c)
+        .toLowerCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 80);
+}
+
 function _blogImage(b) {
     const fallback = 'images/cognitive-behavioral-therapy.jpg';
     if (!b || !b.image) return fallback;
@@ -769,6 +782,12 @@ async function loadBlogs() {
         slider.innerHTML = blogs.map(b => {
             const id = b._id || b.id;
             const img = _blogImage(b);
+            // İndekslenebilir statik blog sayfasına bağ ver (slug yoksa başlıktan türet).
+            const slug = b.slug || _slugify(b.title);
+            const cta = `<a href="/blog/${_escapeHtml(slug)}/"
+                        class="text-primary-600 font-semibold text-left hover:text-primary-700 transition-colors">
+                        Devamını Oku &rarr;
+                    </a>`;
             return `
             <article class="blog-card group">
                 <div class="overflow-hidden">
@@ -779,10 +798,7 @@ async function loadBlogs() {
                 <div class="p-6 flex flex-col flex-1">
                     <h3 class="text-lg font-bold text-gray-800 mb-2">${_escapeHtml(b.title)}</h3>
                     <p class="text-gray-600 mb-4 flex-1">${_escapeHtml(b.summary || '')}</p>
-                    <button type="button" data-blog-id="${id}"
-                        class="blog-read-more text-primary-600 font-semibold text-left hover:text-primary-700 transition-colors">
-                        Devamını Oku &rarr;
-                    </button>
+                    ${cta}
                 </div>
             </article>`;
         }).join('');
