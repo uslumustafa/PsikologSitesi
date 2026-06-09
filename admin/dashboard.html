@@ -316,11 +316,15 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                         <div class="bg-white rounded-xl shadow-lg p-6">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Aylık Randevu Trendi</h3>
-                            <canvas id="appointmentsChart" width="400" height="200"></canvas>
+                            <div style="position: relative; height: 280px;">
+                                <canvas id="appointmentsChart"></canvas>
+                            </div>
                         </div>
                         <div class="bg-white rounded-xl shadow-lg p-6">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Hizmet Dağılımı</h3>
-                            <canvas id="servicesChart" width="400" height="200"></canvas>
+                            <div style="position: relative; height: 280px;">
+                                <canvas id="servicesChart"></canvas>
+                            </div>
                         </div>
                     </div>
 
@@ -566,10 +570,11 @@
                 // Appointments Chart
                 const appointmentsCanvas = document.getElementById('appointmentsChart');
                 if (appointmentsCanvas) {
-                    // Destroy existing chart if any (not implemented here but good practice)
+                    // Eski grafiği yok et (yoksa her güncellemede üst üste çizilip aşağı büyür)
+                    if (window._appointmentsChart) window._appointmentsChart.destroy();
 
                     const appointmentsCtx = appointmentsCanvas.getContext('2d');
-                    new Chart(appointmentsCtx, {
+                    window._appointmentsChart = new Chart(appointmentsCtx, {
                         type: 'line',
                         data: {
                             labels: data.weeklyStats ? data.weeklyStats.map(item => item.day) : ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
@@ -591,8 +596,9 @@
                 // Services Chart
                 const servicesCanvas = document.getElementById('servicesChart');
                 if (servicesCanvas) {
+                    if (window._servicesChart) window._servicesChart.destroy();
                     const servicesCtx = servicesCanvas.getContext('2d');
-                    new Chart(servicesCtx, {
+                    window._servicesChart = new Chart(servicesCtx, {
                         type: 'doughnut',
                         data: {
                             labels: ['Bireysel Terapi', 'Çift Terapisi', 'Aile Terapisi', 'Grup Terapisi'],
