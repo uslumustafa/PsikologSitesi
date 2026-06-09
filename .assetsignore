@@ -1,5 +1,6 @@
 .git
 .gitignore
+_worker.js
 backend
 render.yaml
 wrangler.jsonc

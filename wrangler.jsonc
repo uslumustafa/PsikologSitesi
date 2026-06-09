@@ -1,9 +1,15 @@
 {
-  // Cloudflare Workers "static assets" yapılandırması.
-  // Worker kodu yok; sadece kök dizindeki statik site (index.html, css, js, images) yayınlanır.
+  // Cloudflare Workers — statik site + Render uyandırıcı cron.
+  // Statik varlıklar (index.html, css, js, images) kök dizinden sunulur.
+  // _worker.js sadece eşleşmeyen istekleri ASSETS'e devreder ve cron ile backend'i uyanık tutar.
   "name": "psikolog-onuruslu-site",
   "compatibility_date": "2024-11-01",
+  "main": "_worker.js",
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "triggers": {
+    "crons": ["*/12 5-23 * * *"]
   }
 }
