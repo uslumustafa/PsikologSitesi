@@ -4,6 +4,8 @@
 _worker.js
 backend
 scripts
+src
+tailwind.config.js
 render.yaml
 wrangler.jsonc
 .assetsignore
