@@ -891,3 +891,22 @@ document.addEventListener('DOMContentLoaded', function () {
     loadBlogs().then(initBlogSlider);
     loadGoogleReviews();
 });
+
+
+// ===== ÇEREZ ONAYI (KVKK) =====
+(function () {
+    const banner = document.getElementById('cookie-consent');
+    if (!banner) return;
+    // Daha önce karar verilmediyse banner'ı göster
+    if (!localStorage.getItem('cookieConsent')) {
+        banner.classList.remove('hidden');
+    }
+    function decide(value) {
+        try { localStorage.setItem('cookieConsent', value); } catch (e) { /* ignore */ }
+        banner.classList.add('hidden');
+    }
+    const acceptBtn = document.getElementById('cookie-accept');
+    const rejectBtn = document.getElementById('cookie-reject');
+    if (acceptBtn) acceptBtn.addEventListener('click', () => decide('accepted'));
+    if (rejectBtn) rejectBtn.addEventListener('click', () => decide('rejected'));
+})();
