@@ -569,6 +569,13 @@
             }
         }
 
+        // Sunucu verisini innerHTML'e basmadan önce kaçır (XSS defense-in-depth).
+        function escapeHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
         function updateRecentAppointments(appointments) {
             try {
                 console.log('Son randevular güncelleniyor...');
@@ -593,8 +600,8 @@
                     // Format date and time
                     const date = new Date(appointment.date).toLocaleDateString('tr-TR');
                     const time = appointment.time;
-                    const patientName = appointment.user ? appointment.user.name : 'Bilinmeyen';
-                    const service = appointment.typeTurkish || appointment.type;
+                    const patientName = escapeHtml(appointment.user ? appointment.user.name : 'Bilinmeyen');
+                    const service = escapeHtml(appointment.typeTurkish || appointment.type);
                     const statusClass = getStatusClass(appointment.status);
                     const statusText = appointment.statusTurkish || getStatusText(appointment.status);
 

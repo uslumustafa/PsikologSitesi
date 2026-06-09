@@ -464,6 +464,10 @@ const sendViaResend = async ({ to, subject, html }) => {
 // Prefers Resend (HTTPS) since Render free blocks SMTP; falls back to SMTP locally.
 // Best-effort: never throws to the caller (the contact route catches it).
 const notifyNewContact = async (contact) => {
+  // Test ortamında gerçek e-posta sağlayıcısına (Resend/SMTP) istek atma.
+  if (process.env.NODE_ENV === 'test') {
+    return { mocked: true };
+  }
   const to = process.env.CONTACT_NOTIFY_EMAIL || process.env.SMTP_USER;
   const data = {
     name: contact.name,

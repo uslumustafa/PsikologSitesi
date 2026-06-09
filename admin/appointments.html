@@ -427,6 +427,13 @@
     }
     }
 
+    // Sunucu verisini innerHTML'e basmadan önce kaçır (XSS defense-in-depth).
+    function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+    }
+
     // Update appointments table
     function updateAppointmentsTable(appointments) {
     const tbody = document.getElementById('appointmentsTableBody');
@@ -443,8 +450,8 @@
     const row = document.createElement('tr');
     row.className = 'border-b border-gray-100 hover:bg-gray-50';
 
-    const customerName = appointment.user ? appointment.user.name : (appointment.customerName || 'Bilinmeyen');
-    const serviceName = getServiceName(appointment.type || appointment.service);
+    const customerName = escapeHtml(appointment.user ? appointment.user.name : (appointment.customerName || 'Bilinmeyen'));
+    const serviceName = escapeHtml(getServiceName(appointment.type || appointment.service));
     const dateStr = new Date(appointment.date).toLocaleDateString('tr-TR');
 
     row.innerHTML = `

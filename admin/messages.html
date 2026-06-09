@@ -229,6 +229,14 @@
             }
         }
 
+        // İletişim formu girdisi herkese açıktır; innerHTML'e basmadan önce kaçır
+        // (sunucudaki xss-clean'e ek savunma katmanı).
+        function escapeHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
         function renderMessages(msgs) {
             const tbody = document.getElementById('messagesTableBody');
             tbody.innerHTML = '';
@@ -249,9 +257,9 @@
 
                 row.innerHTML = `
                     <td class="py-3 px-4 text-sm text-gray-600">${dateStr}</td>
-                    <td class="py-3 px-4 text-gray-800">${msg.name} ${!msg.read ? '<span class="ml-1 text-xs bg-blue-500 text-white rounded-full px-2">Yeni</span>' : ''}</td>
-                    <td class="py-3 px-4 text-gray-600">${msg.email}</td>
-                    <td class="py-3 px-4 text-gray-800">${msg.subject}</td>
+                    <td class="py-3 px-4 text-gray-800">${escapeHtml(msg.name)} ${!msg.read ? '<span class="ml-1 text-xs bg-blue-500 text-white rounded-full px-2">Yeni</span>' : ''}</td>
+                    <td class="py-3 px-4 text-gray-600">${escapeHtml(msg.email)}</td>
+                    <td class="py-3 px-4 text-gray-800">${escapeHtml(msg.subject)}</td>
                     <td class="py-3 px-4 flex items-center space-x-2">
                         <button class="text-blue-600 hover:text-blue-800" 
                             onclick="viewMessage('${msg._id}')" title="Görüntüle">
@@ -282,7 +290,8 @@
             document.getElementById('msgSubject').textContent = msg.subject;
             document.getElementById('msgContent').textContent = msg.message;
 
-            document.getElementById('replyBtn').href = `mailto:${msg.email}?subject=Ynt: ${msg.subject}`;
+            document.getElementById('replyBtn').href =
+                `mailto:${encodeURIComponent(msg.email)}?subject=${encodeURIComponent('Ynt: ' + msg.subject)}`;
 
             document.getElementById('messageModal').classList.remove('hidden');
 

@@ -310,6 +310,13 @@
     }
     }
 
+    // Sunucu verisini innerHTML'e basmadan önce kaçır (XSS defense-in-depth).
+    function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+    }
+
     function renderBlogs(blogs) {
     const grid = document.getElementById('blogGrid');
     if (!grid) return;
@@ -336,19 +343,21 @@
             'terapi': 'Terapi', 'kaygi': 'Kaygı', 'depresyon': 'Depresyon',
             'cift-terapisi': 'Çift Terapisi', 'genel': 'Genel'
         };
-        const catLabel = categoryLabels[blog.category] || blog.category;
+        const catLabel = escapeHtml(categoryLabels[blog.category] || blog.category);
+        const safeTitle = escapeHtml(blog.title);
+        const safeSummary = escapeHtml(blog.summary || '');
 
         return `
         <div class="blog-card bg-white rounded-lg shadow-md overflow-hidden">
-            <img src="${imageUrl}" alt="${blog.title}" class="w-full h-48 object-cover"
+            <img src="${escapeHtml(imageUrl)}" alt="${safeTitle}" class="w-full h-48 object-cover"
                 onerror="this.src='../images/anxiety-coping-techniques.jpg'">
             <div class="p-6">
                 <div class="flex items-center mb-2">
                     <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">${catLabel}</span>
                     ${blog.published ? '<span class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Yayında</span>' : '<span class="ml-2 text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">Taslak</span>'}
                 </div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">${blog.title}</h3>
-                <p class="text-gray-600 mb-4 text-sm line-clamp-3">${blog.summary || ''}</p>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">${safeTitle}</h3>
+                <p class="text-gray-600 mb-4 text-sm line-clamp-3">${safeSummary}</p>
                 <div class="flex justify-between items-center">
                     <span class="text-sm text-gray-500">${dateStr}</span>
                     <div class="space-x-2">
