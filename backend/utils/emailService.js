@@ -440,27 +440,49 @@ const isEmailConfigured = () => {
   return Boolean(pass) && pass !== 'your-app-password-here' && pass !== 'your-app-password';
 };
 
-// Notify the site owner that a new contact message arrived.
-// Best-effort: silently skips if SMTP isn't configured, never throws to the caller.
-const notifyNewContact = async (contact) => {
-  if (!isEmailConfigured()) {
-    console.log('ℹ️  SMTP yapılandırılmadı, iletişim bildirim e-postası atlanıyor (mesaj yine de kaydedildi).');
-    return null;
-  }
-
-  const to = process.env.CONTACT_NOTIFY_EMAIL || process.env.SMTP_USER;
-  return sendEmail({
-    to,
-    subject: contact.subject,
-    template: 'contactNotification',
-    data: {
-      name: contact.name,
-      email: contact.email,
-      phone: contact.phone || '-',
-      subject: contact.subject,
-      message: contact.message
-    }
+// Send via Resend's HTTPS API. Works on hosts (e.g. Render free) that block
+// outbound SMTP ports. Uses RESEND_API_KEY; falls back sender is Resend's test
+// address (works without domain verification when sending to the account email).
+const sendViaResend = async ({ to, subject, html }) => {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) throw new Error('RESEND_API_KEY tanımlı değil');
+  const from = process.env.RESEND_FROM || 'Psikolog Onur Uslu <onboarding@resend.dev>';
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from, to: Array.isArray(to) ? to : [to], subject, html })
   });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(`Resend hata ${response.status}: ${JSON.stringify(data)}`);
+  }
+  console.log('Email sent via Resend:', data.id);
+  return data;
+};
+
+// Notify the site owner that a new contact message arrived.
+// Prefers Resend (HTTPS) since Render free blocks SMTP; falls back to SMTP locally.
+// Best-effort: never throws to the caller (the contact route catches it).
+const notifyNewContact = async (contact) => {
+  const to = process.env.CONTACT_NOTIFY_EMAIL || process.env.SMTP_USER;
+  const data = {
+    name: contact.name,
+    email: contact.email,
+    phone: contact.phone || '-',
+    subject: contact.subject,
+    message: contact.message
+  };
+  const html = replaceTemplateVariables(emailTemplates.contactNotification.html, data);
+  const subject = replaceTemplateVariables(emailTemplates.contactNotification.subject, data);
+
+  if (process.env.RESEND_API_KEY) {
+    return sendViaResend({ to, subject, html });
+  }
+  if (isEmailConfigured()) {
+    return sendEmail({ to, subject: contact.subject, template: 'contactNotification', data });
+  }
+  console.log('ℹ️  Mail servisi (Resend/SMTP) yapılandırılmadı, bildirim atlanıyor (mesaj kaydedildi).');
+  return null;
 };
 
 // Send bulk emails
