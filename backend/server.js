@@ -66,7 +66,9 @@ app.use(cors({
     try { hostname = new URL(origin).hostname; } catch (e) { /* ignore */ }
     const isAllowed =
       staticAllowedOrigins.includes(origin) ||
-      /\.pages\.dev$/.test(hostname) ||      // Cloudflare Pages önizleme/yayın adresleri
+      /\.pages\.dev$/.test(hostname) ||      // Cloudflare Pages adresleri
+      /\.workers\.dev$/.test(hostname) ||    // Cloudflare Workers (static assets) adresleri
+      /\.netlify\.app$/.test(hostname) ||    // Netlify (yedek seçenek)
       /\.onrender\.com$/.test(hostname);     // backend kendi adresinden istek atarsa
     return callback(null, isAllowed);
   },
