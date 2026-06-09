@@ -4,6 +4,8 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const Contact = require('../models/Contact');
 const auth = require('../middleware/auth');
+const contactStore = require('../utils/contactStore');
+const { notifyNewContact } = require('../utils/emailService');
 
 /**
  * @swagger
@@ -63,38 +65,31 @@ router.post('/', [
             });
         }
 
-        // Check if MongoDB is connected
-        
-        if (mongoose.connection.readyState !== 1) {
-            console.log('MongoDB not connected, using mock contact submission');
-            const { mockContacts } = require('../utils/mockDb');
-            const newContact = {
-                _id: 'mock-message-' + Date.now(),
+        // Persist the message. Use MongoDB when available, otherwise the
+        // durable file-backed store (survives restarts, no external DB needed).
+        let contact;
+        if (mongoose.connection.readyState === 1) {
+            contact = await new Contact({
                 name: req.body.name,
                 email: req.body.email,
                 phone: req.body.phone,
                 subject: req.body.subject,
-                message: req.body.message,
-                createdAt: new Date(),
-                read: false
-            };
-            mockContacts.push(newContact);
-            return res.status(201).json({
-                success: true,
-                message: 'Message sent successfully (Mock Mode)',
-                data: newContact
+                message: req.body.message
+            }).save();
+        } else {
+            contact = contactStore.add({
+                name: req.body.name,
+                email: req.body.email,
+                phone: req.body.phone,
+                subject: req.body.subject,
+                message: req.body.message
             });
         }
 
-        const contact = new Contact({
-            name: req.body.name,
-            email: req.body.email,
-            phone: req.body.phone,
-            subject: req.body.subject,
-            message: req.body.message
-        });
-
-        await contact.save();
+        // Notify the site owner by email (best-effort; never blocks the response).
+        notifyNewContact(contact).catch(err =>
+            console.error('Contact notification email failed:', err.message)
+        );
 
         res.status(201).json({
             success: true,
@@ -126,20 +121,9 @@ router.post('/', [
  */
 router.get('/', auth.authenticateToken, auth.requireAdmin, async (req, res) => {
     try {
-        // Check if MongoDB is connected
-        
-        if (mongoose.connection.readyState !== 1) {
-            console.log('MongoDB not connected, using mock messages');
-            const { mockContacts } = require('../utils/mockDb');
-            return res.json({
-                success: true,
-                data: {
-                    messages: mockContacts
-                }
-            });
-        }
-
-        const messages = await Contact.find().sort({ createdAt: -1 });
+        const messages = mongoose.connection.readyState === 1
+            ? await Contact.find().sort({ createdAt: -1 })
+            : contactStore.getAll();
 
         res.json({
             success: true,
@@ -179,21 +163,10 @@ router.get('/', auth.authenticateToken, auth.requireAdmin, async (req, res) => {
  */
 router.patch('/:id/read', auth.authenticateToken, auth.requireAdmin, async (req, res) => {
     try {
-        if (mongoose.connection.readyState !== 1) {
-            const { mockContacts } = require('../utils/mockDb');
-            const idx = mockContacts.findIndex(m => m._id === req.params.id);
-            if (idx === -1) {
-                return res.status(404).json({ success: false, message: 'Message not found' });
-            }
-            mockContacts[idx].read = true;
-            return res.json({ success: true, message: 'Message marked as read', data: mockContacts[idx] });
-        }
+        const message = mongoose.connection.readyState === 1
+            ? await Contact.findByIdAndUpdate(req.params.id, { read: true }, { new: true })
+            : contactStore.markRead(req.params.id);
 
-        const message = await Contact.findByIdAndUpdate(
-            req.params.id,
-            { read: true },
-            { new: true }
-        );
         if (!message) {
             return res.status(404).json({ success: false, message: 'Message not found' });
         }
@@ -226,18 +199,14 @@ router.patch('/:id/read', auth.authenticateToken, auth.requireAdmin, async (req,
  */
 router.delete('/:id', auth.authenticateToken, auth.requireAdmin, async (req, res) => {
     try {
-        if (mongoose.connection.readyState !== 1) {
-            const { mockContacts } = require('../utils/mockDb');
-            const idx = mockContacts.findIndex(m => m._id === req.params.id);
-            if (idx === -1) {
-                return res.status(404).json({ success: false, message: 'Message not found' });
-            }
-            mockContacts.splice(idx, 1);
-            return res.json({ success: true, message: 'Message deleted' });
+        let deleted;
+        if (mongoose.connection.readyState === 1) {
+            deleted = await Contact.findByIdAndDelete(req.params.id);
+        } else {
+            deleted = contactStore.remove(req.params.id);
         }
 
-        const message = await Contact.findByIdAndDelete(req.params.id);
-        if (!message) {
+        if (!deleted) {
             return res.status(404).json({ success: false, message: 'Message not found' });
         }
         res.json({ success: true, message: 'Message deleted' });

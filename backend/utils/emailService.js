@@ -294,6 +294,52 @@ const emailTemplates = {
     `
   },
 
+  contactNotification: {
+    subject: 'Yeni İletişim Mesajı - {{subject}}',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Yeni İletişim Mesajı</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #3B82F6; color: white; padding: 20px; text-align: center; }
+          .content { padding: 20px; background: #f9f9f9; }
+          .details { background: white; padding: 20px; border-radius: 5px; margin: 20px 0; }
+          .message-box { background: white; padding: 16px; border-left: 4px solid #3B82F6; border-radius: 4px; margin-top: 12px; white-space: pre-wrap; }
+          .footer { padding: 20px; text-align: center; color: #666; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Psikolog Onur Uslu</h1>
+            <p>Web Sitesi İletişim Formu</p>
+          </div>
+          <div class="content">
+            <p>Web sitenizden yeni bir iletişim mesajı geldi:</p>
+            <div class="details">
+              <p><strong>Gönderen:</strong> {{name}}</p>
+              <p><strong>E-posta:</strong> {{email}}</p>
+              <p><strong>Telefon:</strong> {{phone}}</p>
+              <p><strong>Konu:</strong> {{subject}}</p>
+              <div class="message-box">{{message}}</div>
+            </div>
+            <p>Yanıtlamak için doğrudan <a href="mailto:{{email}}">{{email}}</a> adresine e-posta gönderebilirsiniz.</p>
+          </div>
+          <div class="footer">
+            <p>Bu bildirim, web sitesi iletişim formundan otomatik olarak oluşturulmuştur.</p>
+            <p>Mesajları yönetmek için admin panelini kullanabilirsiniz.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `
+  },
+
   'appointment-status-update': {
     subject: 'Randevu Durumu Güncellendi - Psikolog Onur Uslu',
     html: `
@@ -388,6 +434,35 @@ const sendEmail = async ({ to, subject, template, data = {}, attachments = [] })
   }
 };
 
+// Check whether SMTP is actually configured (not left as a placeholder).
+const isEmailConfigured = () => {
+  const pass = process.env.SMTP_PASS;
+  return Boolean(pass) && pass !== 'your-app-password-here' && pass !== 'your-app-password';
+};
+
+// Notify the site owner that a new contact message arrived.
+// Best-effort: silently skips if SMTP isn't configured, never throws to the caller.
+const notifyNewContact = async (contact) => {
+  if (!isEmailConfigured()) {
+    console.log('ℹ️  SMTP yapılandırılmadı, iletişim bildirim e-postası atlanıyor (mesaj yine de kaydedildi).');
+    return null;
+  }
+
+  const to = process.env.CONTACT_NOTIFY_EMAIL || process.env.SMTP_USER;
+  return sendEmail({
+    to,
+    subject: contact.subject,
+    template: 'contactNotification',
+    data: {
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone || '-',
+      subject: contact.subject,
+      message: contact.message
+    }
+  });
+};
+
 // Send bulk emails
 const sendBulkEmails = async (emails) => {
   const results = [];
@@ -420,6 +495,8 @@ const testEmailConfiguration = async () => {
 module.exports = {
   sendEmail,
   sendBulkEmails,
+  notifyNewContact,
+  isEmailConfigured,
   testEmailConfiguration,
   emailTemplates
 };

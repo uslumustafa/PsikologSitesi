@@ -337,6 +337,15 @@ router.post('/forgot-password', [
     .withMessage('Please provide a valid email')
 ], async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
     const { email } = req.body;
 
     const user = await User.findByEmail(email);
@@ -489,6 +498,15 @@ router.post('/refresh', [
     .withMessage('Refresh token is required')
 ], async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Refresh token is required',
+        errors: errors.array()
+      });
+    }
+
     const { refreshToken } = req.body;
 
     // Verify refresh token
@@ -640,12 +658,14 @@ router.post('/admin/login', [
     const mongoose = require('mongoose');
     if (mongoose.connection.readyState !== 1) {
       console.log('MongoDB not connected, using mock admin login');
-      // Mock Admin Login
-      if (email === 'admin@psikologonuruslu.com' && password === 'admin123') {
+      // Mock Admin Login — credentials configurable via env for production.
+      const adminEmail = (process.env.ADMIN_EMAIL || 'admin@psikologonuruslu.com').toLowerCase();
+      const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+      if (email === adminEmail && password === adminPassword) {
         const mockUser = {
           _id: 'mock-admin-id',
           name: 'Admin User',
-          email: 'admin@psikologonuruslu.com',
+          email: adminEmail,
           role: 'admin',
           isActive: true
         };
@@ -670,8 +690,8 @@ router.post('/admin/login', [
       }
     }
 
-    // Find admin user
-    const user = await User.findOne({ email, role: 'admin' });
+    // Find admin user (password is select:false by default, so request it explicitly)
+    const user = await User.findOne({ email, role: 'admin' }).select('+password');
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -697,12 +717,8 @@ router.post('/admin/login', [
     }
 
     // Generate tokens
-    const token = generateToken(user);
-    const refreshToken = generateRefreshToken(user);
-
-    // Save refresh token
-    user.refreshToken = refreshToken;
-    await user.save();
+    const token = generateToken({ id: user._id, role: user.role });
+    const refreshToken = generateRefreshToken({ id: user._id });
 
     res.json({
       success: true,

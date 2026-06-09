@@ -1,1 +1,12 @@
 node_modules/
+
+.env
+.env.backup
+*.log
+.DS_Store
+
+# Persisted contact messages (runtime data)
+backend/data/
+
+# Local Claude Code settings (keep launch.json shared)
+.claude/settings.local.json
