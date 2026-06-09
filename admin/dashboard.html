@@ -164,6 +164,11 @@
                         <i class="fas fa-calendar-alt mr-3"></i>
                         Randevular
                     </a>
+                    <a href="messages.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-envelope mr-3"></i>
+                        Mesajlar
+                    </a>
                     <a href="site-settings.html"
                         class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
                         <i class="fas fa-cog mr-3"></i>
@@ -173,21 +178,6 @@
                         class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
                         <i class="fas fa-external-link-alt mr-3"></i>
                         Siteyi Görüntüle
-                    </a>
-                    <button onclick="logout()"
-                        class="nav-item w-full text-left flex items-center px-4 py-3 rounded-lg transition-all duration-200 hover:bg-red-500/20">
-                        <i class="fas fa-sign-out-alt mr-3"></i>
-                        Çıkış Yap
-                    </button>
-                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200"
-                        data-page="services">
-                        <i class="fas fa-cogs mr-3"></i>
-                        Hizmetler
-                    </a>
-                    <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200"
-                        data-page="messages">
-                        <i class="fas fa-envelope mr-3"></i>
-                        Mesajlar
                     </a>
                 </nav>
             </div>
@@ -210,14 +200,10 @@
                         <p class="text-gray-600 mt-1" id="pageSubtitle">Genel bakış ve istatistikler</p>
                     </div>
                     <div class="flex items-center space-x-4 slide-in">
-                        <div class="relative">
-                            <button
-                                class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
-                                <i class="fas fa-bell mr-2"></i>Bildirimler
-                                <span
-                                    class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center pulse-animation">3</span>
-                            </button>
-                        </div>
+                        <a href="messages.html"
+                            class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg inline-flex items-center">
+                            <i class="fas fa-bell mr-2"></i>Bildirimler
+                        </a>
                         <div
                             class="flex items-center space-x-3 bg-white/50 rounded-xl p-2 hover:bg-white/80 transition-all duration-300">
                             <div
@@ -410,52 +396,10 @@
         // Update admin info
         document.getElementById('adminName').textContent = adminUser.name || 'Admin';
 
-        // Navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                // Remove active class from all items
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-
-                // Add active class to clicked item
-                this.classList.add('active');
-
-                // Get page name
-                const page = this.getAttribute('data-page');
-
-                // Hide all content sections
-                document.querySelectorAll('.content-section').forEach(section => {
-                    section.classList.add('hidden');
-                });
-
-                // Show selected content
-                const contentSection = document.getElementById(page + '-content');
-                if (contentSection) {
-                    contentSection.classList.remove('hidden');
-                } else {
-                    // If content section doesn't exist (e.g. for external links), handle accordingly
-                    if (page === 'dashboard') {
-                        document.getElementById('dashboard-content').classList.remove('hidden');
-                    }
-                }
-
-                // Update page title
-                const titles = {
-                    'dashboard': 'Dashboard',
-                    'appointments': 'Randevu Yönetimi',
-                    'customers': 'Müşteri Yönetimi',
-                    'schedule': 'Çalışma Saatleri',
-                    'holidays': 'Tatil Günleri',
-                    'blog': 'Blog Yönetimi',
-                    'services': 'Hizmet Yönetimi',
-                    'messages': 'Mesaj Yönetimi'
-                };
-
-                document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
-                document.getElementById('pageSubtitle').textContent = getPageSubtitle(page);
-            });
-        });
+        // Navigasyon: sol menüdeki öğeler gerçek sayfa linkleridir
+        // (blog-management.html, appointments.html, messages.html, site-settings.html).
+        // Eskiden buradaki kod linkleri engelleyip (preventDefault) içeriği gizliyordu;
+        // kaldırıldı, artık linkler normal şekilde yönlendiriyor.
 
         function getPageSubtitle(page) {
             const subtitles = {
