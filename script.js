@@ -727,9 +727,167 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // ===== PAGE LOAD =====
 document.addEventListener('DOMContentLoaded', function () {
-    // Admin ayarlarını yükle
+    // Admin ayarlarını bir kez yükle (sürekli polling rate-limit'e takılıyordu)
     loadAdminSettings();
+});
 
-    // Her 5 saniyede bir admin ayarlarını kontrol et
-    setInterval(loadAdminSettings, 5000);
+// ===== DİNAMİK BLOG (slider + modal) =====
+function _escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+function _blogImage(b) {
+    const fallback = 'images/cognitive-behavioral-therapy.jpg';
+    if (!b.image) return fallback;
+    return b.image.startsWith('http') ? b.image : `images/${b.image}`;
+}
+
+async function loadBlogs() {
+    const slider = document.getElementById('blog-slider');
+    if (!slider) return;
+    try {
+        const res = await fetch(`${window.API_URL || '/api'}/blog?published=true&limit=30`);
+        const json = await res.json();
+        const blogs = (json.data && (json.data.blogs || json.data)) || [];
+        window._blogs = blogs;
+
+        if (!blogs.length) {
+            slider.innerHTML = '<div class="w-full text-center text-gray-500 py-12">Henüz yazı eklenmemiş.</div>';
+            return;
+        }
+
+        slider.innerHTML = blogs.map(b => {
+            const id = b._id || b.id;
+            const img = _blogImage(b);
+            return `
+            <article class="blog-card group">
+                <div class="overflow-hidden">
+                    <img src="${_escapeHtml(img)}" onerror="this.src='images/cognitive-behavioral-therapy.jpg'"
+                        alt="${_escapeHtml(b.title)}"
+                        class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="p-6 flex flex-col flex-1">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">${_escapeHtml(b.title)}</h3>
+                    <p class="text-gray-600 mb-4 flex-1">${_escapeHtml(b.summary || '')}</p>
+                    <button type="button" data-blog-id="${id}"
+                        class="blog-read-more text-primary-600 font-semibold text-left hover:text-primary-700 transition-colors">
+                        Devamını Oku &rarr;
+                    </button>
+                </div>
+            </article>`;
+        }).join('');
+    } catch (error) {
+        console.error('Blog yükleme hatası:', error);
+        slider.innerHTML = '<div class="w-full text-center text-gray-500 py-12">Yazılar yüklenemedi.</div>';
+    }
+}
+
+function openDynamicBlogModal(id) {
+    const b = (window._blogs || []).find(x => String(x._id || x.id) === String(id));
+    if (!b) return;
+    document.getElementById('blog-modal-title').textContent = b.title;
+    const mi = document.getElementById('blog-modal-image');
+    mi.src = _blogImage(b);
+    mi.alt = b.title;
+    mi.onerror = function () { this.src = 'images/cognitive-behavioral-therapy.jpg'; };
+    document.getElementById('blog-modal-content').innerHTML = b.content || `<p>${_escapeHtml(b.summary || '')}</p>`;
+    document.getElementById('blog-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDynamicBlogModal() {
+    const modal = document.getElementById('blog-modal');
+    if (modal) modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function initBlogSlider() {
+    const slider = document.getElementById('blog-slider');
+    const prev = document.getElementById('blog-prev');
+    const next = document.getElementById('blog-next');
+    if (!slider || !prev || !next) return;
+    const step = () => {
+        const card = slider.querySelector('.blog-card');
+        return card ? card.offsetWidth + 24 : 320;
+    };
+    prev.addEventListener('click', () => slider.scrollBy({ left: -step(), behavior: 'smooth' }));
+    next.addEventListener('click', () => slider.scrollBy({ left: step(), behavior: 'smooth' }));
+}
+
+// Event delegation (CSP-safe; inline onclick is avoided everywhere).
+function initBlogModalEvents() {
+    const slider = document.getElementById('blog-slider');
+    if (slider) {
+        slider.addEventListener('click', function (e) {
+            const btn = e.target.closest('.blog-read-more');
+            if (btn && btn.dataset.blogId) openDynamicBlogModal(btn.dataset.blogId);
+        });
+    }
+    const modal = document.getElementById('blog-modal');
+    if (modal) {
+        // Close on backdrop click or any element marked data-blog-close.
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal || e.target.closest('[data-blog-close]')) {
+                closeDynamicBlogModal();
+            }
+        });
+    }
+    // Close on Escape key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeDynamicBlogModal();
+    });
+}
+
+window.openDynamicBlogModal = openDynamicBlogModal;
+window.closeDynamicBlogModal = closeDynamicBlogModal;
+
+// ===== GERÇEK GOOGLE YORUMLARI (yapılandırılmışsa) =====
+async function loadGoogleReviews() {
+    const grid = document.getElementById('reviews-grid');
+    if (!grid) return;
+    try {
+        const res = await fetch(`${window.API_URL || '/api'}/reviews`);
+        const json = await res.json();
+        // Yapılandırılmamışsa veya yorum yoksa: mevcut seçme kartları kalsın.
+        if (!json.configured || !json.data || !json.data.reviews || !json.data.reviews.length) return;
+
+        const colors = ['bg-orange-500', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-teal-500'];
+        grid.innerHTML = json.data.reviews.map((r, i) => {
+            const initial = (r.author || '?').trim().charAt(0).toUpperCase();
+            const stars = Array.from({ length: 5 }, (_, k) =>
+                `<i class="fas fa-star${k < Math.round(r.rating || 5) ? '' : ' text-gray-300'}"></i>`).join('');
+            const avatar = r.profilePhoto
+                ? `<img src="${_escapeHtml(r.profilePhoto)}" alt="${_escapeHtml(r.author)}" class="w-10 h-10 rounded-full mr-3 object-cover">`
+                : `<div class="w-10 h-10 ${colors[i % colors.length]} rounded-full flex items-center justify-center text-white font-bold text-lg mr-3">${_escapeHtml(initial)}</div>`;
+            return `
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+                <div class="flex items-center mb-4">
+                    ${avatar}
+                    <div>
+                        <div class="font-bold text-gray-900 text-sm">${_escapeHtml(r.author || '')}</div>
+                        <div class="text-xs text-gray-500">Google Yorumu</div>
+                    </div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                        alt="Google" class="w-5 h-5 ml-auto">
+                </div>
+                <div class="flex items-center mb-3">
+                    <div class="text-yellow-400 text-sm flex space-x-1">${stars}</div>
+                    <span class="text-xs text-gray-500 ml-2">${_escapeHtml(r.time || '')}</span>
+                </div>
+                <p class="text-gray-700 text-sm leading-relaxed">${_escapeHtml(r.text || '')}</p>
+            </div>`;
+        }).join('');
+    } catch (error) {
+        // Sessizce mevcut kartlara düş.
+        console.log('Google yorumları yüklenemedi, seçme kartlar gösteriliyor:', error.message);
+    }
+}
+
+// Sayfa yüklendiğinde blog ve yorumları başlat
+document.addEventListener('DOMContentLoaded', function () {
+    initBlogModalEvents();
+    loadBlogs().then(initBlogSlider);
+    loadGoogleReviews();
 });

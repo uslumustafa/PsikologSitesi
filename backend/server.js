@@ -20,6 +20,7 @@ const adminRoutes = require('./routes/admin');
 const blogRoutes = require('./routes/blog');
 const siteSettingsRoutes = require('./routes/siteSettings');
 const contactRoutes = require('./routes/contact');
+const reviewRoutes = require('./routes/reviews');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -187,6 +188,7 @@ app.use('/api/admin', authenticateToken, adminRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/site-settings', siteSettingsRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // API documentation endpoint
 app.get('/api-docs.json', (req, res) => {

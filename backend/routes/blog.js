@@ -41,68 +41,83 @@ const upload = multer({
 let blogs = [
   {
     id: 1,
-    title: 'Kaygıyla Başa Çıkmanın 5 Pratik Yolu',
-    category: 'kaygi',
-    summary: 'Günlük hayatta anksiyete ile başa çıkmanıza yardımcı olacak basit ve etkili teknikler...',
-    content: '<p>Kaygı, günlük yaşamın bir parçası olabilir, ancak onunla başa çıkmak için etkili yöntemler geliştirmek önemlidir.</p>',
-    image: 'anxiety-coping-techniques.jpg',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15'),
+    title: 'Bilişsel Davranışçı Terapi (BDT) Nedir?',
+    category: 'terapi',
+    summary: 'Düşünce, duygu ve davranışlarımız arasındaki bağı çözen, bilimsel olarak en çok kanıtlanmış terapi yöntemlerinden biri.',
+    content: `<p>Bilişsel Davranışçı Terapi (BDT), düşüncelerimizin, duygularımızın ve davranışlarımızın birbiriyle yakından bağlantılı olduğu fikrine dayanan, bilimsel olarak etkinliği en çok kanıtlanmış terapi yaklaşımlarından biridir. Temel mantığı basittir: bir olayı nasıl yorumladığımız, o olay karşısında nasıl hissettiğimizi ve nasıl davrandığımızı belirler.</p>
+<h3>BDT Nasıl Çalışır?</h3>
+<p>Çoğu zaman bizi zorlayan, olayın kendisi değil, ona yüklediğimiz anlamdır. BDT, bu otomatik ve çoğunlukla fark etmediğimiz olumsuz düşünceleri tanımayı, sorgulamayı ve daha gerçekçi olanlarla değiştirmeyi öğretir.</p>
+<h4>Üzerine Çalıştığımız Alanlar:</h4>
+<ul>
+<li><strong>Otomatik Düşünceler:</strong> Zihninizden hızla geçen ve ruh halinizi etkileyen düşünceleri fark etmek.</li>
+<li><strong>Bilişsel Çarpıtmalar:</strong> "Ya hep ya hiç" düşüncesi, felaketleştirme gibi düşünce hatalarını tespit etmek.</li>
+<li><strong>Davranışsal Deneyler:</strong> Korkulan durumlarla kontrollü biçimde yüzleşerek yeni öğrenmeler edinmek.</li>
+</ul>
+<h3>BDT Hangi Durumlarda Etkilidir?</h3>
+<p>Kaygı bozuklukları, depresyon, panik atak, takıntılar (OKB), fobiler ve stres yönetimi başta olmak üzere geniş bir alanda etkilidir. Genellikle kısa ve orta vadeli, hedefe yönelik bir süreçtir; size günlük hayatta kullanabileceğiniz somut beceriler kazandırmayı amaçlar.</p>
+<p>Unutmayın: amaç olumsuz düşünceleri bastırmak değil, onlarla daha sağlıklı bir ilişki kurmaktır.</p>`,
+    image: 'cognitive-behavioral-therapy.jpg',
+    createdAt: new Date('2024-02-01'),
+    updatedAt: new Date('2024-02-01'),
     published: true
   },
   {
     id: 2,
-    title: 'Bilişsel Davranışçı Terapi (BDT)',
-    category: 'terapi',
-    summary: 'Zihinsel esenliğe giden bilimsel yolculuk hakkında detaylı bilgiler...',
-    content: '<p>Bilişsel Davranışçı Terapi, düşünce, duygu ve davranış arasındaki bağlantıları inceleyen etkili bir terapi yöntemidir.</p>',
-    image: 'cognitive-behavioral-therapy.jpg',
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-10'),
+    title: 'Kaygıyla Başa Çıkmanın 5 Pratik Yolu',
+    category: 'kaygi',
+    summary: 'Günlük hayatta anksiyete ile başa çıkmanıza yardımcı olacak basit, etkili ve uygulaması kolay teknikler.',
+    content: `<p>Kaygı, yaşamın doğal bir parçasıdır; ancak yoğunlaştığında günlük hayatı zorlaştırabilir. İşte kaygıyı yönetmenize yardımcı olacak 5 pratik yöntem:</p>
+<ol>
+<li><strong>Derin Nefes Alın:</strong> Burnunuzdan 4 saniye nefes alın, 4 saniye tutun, 6 saniyede verin. Bu, vücudunuzun sakinleşme sistemini devreye sokar.</li>
+<li><strong>Fiziksel Aktivite:</strong> Düzenli egzersiz, stres hormonlarını azaltır ve ruh halini iyileştiren endorfin salgılatır. Günlük kısa yürüyüşler bile fark yaratır.</li>
+<li><strong>Zihinsel Farkındalık (Mindfulness):</strong> Günde 10 dakikalık bir farkındalık çalışması, zihni şimdiki ana getirerek kaygıyı azaltır.</li>
+<li><strong>Düşüncelerinizi Sorgulayın:</strong> "Bu düşünce gerçekçi mi? Kanıtı ne?" diye sorun. Çoğu kaygılı düşünce abartılıdır.</li>
+<li><strong>Destek Alın:</strong> Zorlandığınızda bir uzmandan destek almak güçsüzlük değil, kendinize değer verdiğinizin göstergesidir.</li>
+</ol>
+<p>Kaygıyla başa çıkmak bir süreçtir. Kendinize sabır gösterin ve ihtiyaç duyduğunuzda destek istemekten çekinmeyin.</p>`,
+    image: 'anxiety-coping-techniques.jpg',
+    createdAt: new Date('2024-01-20'),
+    updatedAt: new Date('2024-01-20'),
     published: true
   },
   {
     id: 3,
     title: 'Şema Terapi Nedir?',
     category: 'terapi',
-    summary: 'Hayatınızda tekrar eden olumsuz kalıpların kökenlerini anlamak...',
-    content: '<p>Şema Terapi, erken yaşam deneyimlerinden kaynaklanan kalıcı düşünce ve davranış kalıplarını değiştirmeyi hedefleyen bir terapi yaklaşımıdır.</p>',
+    summary: 'Hayatınızda tekrar eden olumsuz kalıpların kökenlerini anlamak ve onları kalıcı olarak değiştirmek.',
+    content: `<p>Şema Terapi, erken yaşam deneyimlerinden kaynaklanan ve yaşam boyu tekrar eden olumsuz düşünce ile davranış kalıplarını ("şemalar") değiştirmeyi hedefleyen bütünleştirici bir terapi yaklaşımıdır.</p>
+<h3>Şema Nedir?</h3>
+<p>Şemalar, çocuklukta temel duygusal ihtiyaçlarımız tam karşılanmadığında oluşan derin inanç kalıplarıdır. Örneğin "terk edilme", "kusurluluk" veya "yetersizlik" şemaları yetişkinlikte ilişkilerimizi ve seçimlerimizi sessizce yönlendirebilir.</p>
+<h4>Süreçte Kullanılan Teknikler:</h4>
+<ul>
+<li><strong>Şema Aktivasyon Çalışmaları:</strong> Şemaları tetikleyen durumları ve tepkileri fark etmek.</li>
+<li><strong>Görselleştirme:</strong> Çocukluk anılarına dönerek şemaların kökenini anlamak.</li>
+<li><strong>Davranışsal Deneyler:</strong> Yeni ve sağlıklı davranış kalıplarını denemek.</li>
+</ul>
+<p>Şema terapi, kişinin kendini daha derin anlamasına ve daha tatmin edici ilişkiler kurmasına yardımcı olan güçlü bir yöntemdir.</p>`,
     image: 'schema-therapy.jpg',
-    createdAt: new Date('2024-01-05'),
-    updatedAt: new Date('2024-01-05'),
+    createdAt: new Date('2024-01-10'),
+    updatedAt: new Date('2024-01-10'),
     published: true
   },
   {
     id: 4,
-    title: 'Depresyon Belirtileri ve Tedavisi',
-    category: 'depresyon',
-    summary: 'Depresyonun yaygın belirtileri ve modern tedavi yöntemleri hakkında bilmeniz gerekenler...',
-    content: '<p>Depresyon, sadece üzgün hissetmekten çok daha fazlasıdır. Uyku bozuklukları, iştah değişiklikleri ve enerji kaybı gibi fiziksel belirtilerle de kendini gösterebilir. BDT, depresyon tedavisinde en etkili yöntemlerden biridir.</p>',
-    image: 'depression-symptoms.jpg',
-    createdAt: new Date('2024-01-20'),
-    updatedAt: new Date('2024-01-20'),
-    published: true
-  },
-  {
-    id: 5,
-    title: 'Çift Terapisinde İletişim Teknikleri',
-    category: 'cift-terapisi',
-    summary: 'İlişkinizde daha sağlıklı iletişim kurmak için kullanabileceğiniz pratik yöntemler...',
-    content: '<p>İlişkilerde en büyük sorun genellikle iletişim eksikliğidir. "Ben" dili kullanmak, aktif dinleme ve empati kurma gibi teknikler, çatışmaları çözmede büyük rol oynar.</p>',
-    image: 'couples-therapy.jpg',
-    createdAt: new Date('2024-01-25'),
-    updatedAt: new Date('2024-01-25'),
-    published: true
-  },
-  {
-    id: 6,
-    title: 'Online Terapi Etkili mi?',
+    title: 'Sağlıklı Sınırlar Koymak Neden Önemlidir?',
     category: 'genel',
-    summary: 'Dijital çağda terapiye erişim: Online terapinin avantajları ve bilimsel etkinliği...',
-    content: '<p>Yapılan araştırmalar, online terapinin yüz yüze terapi kadar etkili olduğunu göstermektedir. Özellikle yoğun çalışanlar veya ulaşım sorunu yaşayanlar için mükemmel bir alternatiftir.</p>',
-    image: 'online-therapy.jpg',
-    createdAt: new Date('2024-01-28'),
-    updatedAt: new Date('2024-01-28'),
+    summary: 'Kendinize ve ilişkilerinize duyduğunuz saygının en somut göstergesi: sınırlar neden gereklidir ve nasıl konulur?',
+    content: `<p>Kişisel sınırları, evinizin etrafındaki bir çit gibi düşünebilirsiniz. Bu çit, neyin size ait olduğunu (duygularınız, zamanınız, enerjiniz) belirler ve kimi içeri alacağınıza siz karar verirsiniz.</p>
+<h3>Sınırlar Neden Önemlidir?</h3>
+<p>Sınır koymak bencillik değildir; aksine hem kendinize hem de ilişkilerinize duyduğunuz saygının göstergesidir.</p>
+<ul>
+<li><strong>Öz-değeri korur:</strong> "İhtiyaçlarım ve zamanım değerlidir" demenin en net yoludur.</li>
+<li><strong>Tükenmişliği önler:</strong> Enerjinizi nerede harcayacağınızı kontrol etmenizi sağlar.</li>
+<li><strong>Güveni artırır:</strong> Tutarlı sınırlar, ilişkilerde netlik ve güven oluşturur.</li>
+</ul>
+<h3>Nasıl Sınır Konulur?</h3>
+<p>Net ve saygılı bir dille, suçlamadan ihtiyacınızı ifade edin. "Ben" dili kullanın: "Bu konuda rahatsız oluyorum, lütfen..." gibi. Sınır koymak başta zor gelse de, zamanla hem sizi hem ilişkilerinizi güçlendirir.</p>`,
+    image: 'psikolog-onur-uslu-office.jpg',
+    createdAt: new Date('2024-01-05'),
+    updatedAt: new Date('2024-01-05'),
     published: true
   }
 ];
@@ -263,7 +278,7 @@ router.post('/', authenticateToken, requireAdmin, upload.single('image'), async 
     }
 
     const isMongoConnected = mongoose.connection.readyState === 1;
-    const blogImage = req.file ? req.file.filename : 'default-blog.jpg';
+    const blogImage = req.file ? req.file.filename : (req.body.image || 'cognitive-behavioral-therapy.jpg');
     const isPublished = published === 'true' || published === true;
 
     let newBlog;

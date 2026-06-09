@@ -644,3 +644,63 @@ img {
         padding: 0;
     }
 }
+/* ===== Blog Slider ===== */
+.blog-slider {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0.25rem 1.5rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.blog-slider::-webkit-scrollbar { height: 8px; }
+.blog-slider::-webkit-scrollbar-track { background: transparent; }
+.blog-slider::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.blog-card {
+  flex: 0 0 86%;
+  scroll-snap-align: start;
+  background: #fff;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.blog-card:hover { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12); transform: translateY(-4px); }
+@media (min-width: 640px) { .blog-card { flex-basis: 46%; } }
+@media (min-width: 1024px) { .blog-card { flex-basis: 31.5%; } }
+.blog-nav-btn {
+  position: absolute;
+  top: 38%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f766e;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+}
+.blog-nav-btn:hover { background: #0f766e; color: #fff; }
+.blog-nav-prev { left: -10px; }
+.blog-nav-next { right: -10px; }
+@media (max-width: 767px) {
+  .blog-nav-btn { display: none; }
+  .blog-card { flex-basis: 86%; }
+}
+/* Blog modal content typography */
+.blog-content h3 { font-size: 1.15rem; font-weight: 700; margin-top: 1rem; color: #1f2937; }
+.blog-content h4 { font-size: 1.02rem; font-weight: 700; margin-top: 0.75rem; color: #374151; }
+.blog-content ul { list-style: disc; padding-left: 1.5rem; }
+.blog-content ol { list-style: decimal; padding-left: 1.5rem; }
+.blog-content li { margin-bottom: 0.4rem; }
+.blog-content p { margin-bottom: 0.75rem; }
