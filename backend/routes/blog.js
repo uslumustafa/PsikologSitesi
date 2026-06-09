@@ -7,6 +7,22 @@ const fs = require('fs').promises;
 const mongoose = require('mongoose');
 const Blog = require('../models/Blog');
 
+// Blog içeriği admin (yetkili) tarafından, zengin metin editöründen gelir ve HTML içerir.
+// Global xss-clean middleware'i bu HTML'i kaçırıyor (< -> &lt;), bu da yazının düz metin
+// gibi görünmesine yol açıyor. İçerik güvenilir (sadece admin) olduğundan kaçışı geri çözüyoruz.
+function decodeHtmlEntities(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&#x2F;/g, '/')
+    .replace(/&#47;/g, '/')
+    .replace(/&amp;/g, '&');
+}
+
 // Configure multer for image uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -268,7 +284,8 @@ router.get('/:id', async (req, res) => {
 // Create new blog (Admin only)
 router.post('/', authenticateToken, requireAdmin, upload.single('image'), async (req, res) => {
   try {
-    const { title, category, summary, content, published = true } = req.body;
+    const { title, category, summary, published = true } = req.body;
+    const content = decodeHtmlEntities(req.body.content);
 
     if (!title || !category || !summary || !content) {
       return res.status(400).json({
@@ -325,7 +342,8 @@ router.post('/', authenticateToken, requireAdmin, upload.single('image'), async 
 router.put('/:id', authenticateToken, requireAdmin, upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, category, summary, content, published } = req.body;
+    const { title, category, summary, published } = req.body;
+    const content = decodeHtmlEntities(req.body.content);
     const isMongoConnected = mongoose.connection.readyState === 1;
 
     let updatedBlog;
