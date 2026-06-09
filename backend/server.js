@@ -31,6 +31,10 @@ const reminderJob = require('./jobs/reminderJob');
 
 const app = express();
 
+// Render/Cloudflare gibi ters proxy arkasında çalışırken gerçek ziyaretçi IP'sini
+// (X-Forwarded-For) doğru oku — yoksa rate-limit herkesi tek IP sanıp toplu kilitler.
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -81,12 +85,14 @@ app.use(cors({
 if (process.env.NODE_ENV !== 'test') {
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    max: 300, // her IP için 15 dakikada 300 istek
     message: {
       error: 'Too many requests from this IP, please try again later.'
     },
     standardHeaders: true,
     legacyHeaders: false,
+    // Sağlık kontrolünü limitten muaf tut (Render sık sık /api/health'e bakar)
+    skip: (req) => req.originalUrl === '/api/health' || req.originalUrl === '/health'
   });
 
   app.use('/api/', limiter);
