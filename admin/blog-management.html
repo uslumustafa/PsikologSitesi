@@ -352,10 +352,10 @@
                 <div class="flex justify-between items-center">
                     <span class="text-sm text-gray-500">${dateStr}</span>
                     <div class="space-x-2">
-                        <button onclick="editBlog(${blog.id || blog._id})" class="text-indigo-600 hover:text-indigo-800" title="Düzenle">
+                        <button onclick="editBlog('${blog.id || blog._id}')" class="text-indigo-600 hover:text-indigo-800" title="Düzenle">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button onclick="deleteBlog(${blog.id || blog._id})" class="text-red-600 hover:text-red-800" title="Sil">
+                        <button onclick="deleteBlog('${blog.id || blog._id}')" class="text-red-600 hover:text-red-800" title="Sil">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -435,7 +435,7 @@
     quill.root.innerHTML = blog.content; // Or use quill.setContents if using Delta
 
     if (blog.image) {
-    document.getElementById('previewImg').src = blog.image;
+    document.getElementById('previewImg').src = blog.image.startsWith('http') ? blog.image : `../images/${blog.image}`;
     document.getElementById('imagePreview').classList.remove('hidden');
     }
     }
