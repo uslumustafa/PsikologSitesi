@@ -75,6 +75,12 @@ function withSlugs(rawPosts) {
 const STATIC_PAGES = [
   { loc: '/', changefreq: 'weekly', priority: '1.0' },
   { loc: '/blog/', changefreq: 'weekly', priority: '0.8' },
+  // Hizmet sayfaları (scripts/build-services.js üretir, elle commit'lenir)
+  { loc: '/yetiskin-danismanligi/', changefreq: 'monthly', priority: '0.9' },
+  { loc: '/cift-terapisi/', changefreq: 'monthly', priority: '0.9' },
+  { loc: '/cocuk-ergen-danismanligi/', changefreq: 'monthly', priority: '0.9' },
+  { loc: '/online-terapi/', changefreq: 'monthly', priority: '0.9' },
+  { loc: '/aile-danismanligi/', changefreq: 'monthly', priority: '0.9' },
   { loc: '/kvkk.html', changefreq: 'yearly', priority: '0.3' },
   { loc: '/gizlilik-politikasi.html', changefreq: 'yearly', priority: '0.3' },
   { loc: '/cerez-politikasi.html', changefreq: 'yearly', priority: '0.3' },
