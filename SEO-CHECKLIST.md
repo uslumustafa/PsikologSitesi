@@ -33,7 +33,8 @@
 ### 4. Teknik SEO
 - [x] **Sitemap.xml**: Tüm sayfalar ve öncelikler
 - [x] **Robots.txt**: Arama motoru yönergeleri
-- [x] **Favicon**: Çoklu boyutlarda favicon
+- [x] **Favicon**: Çoklu boyutlarda favicon (Ψ/teal seti `scripts/make-favicons.py` ile üretildi — önceden dosyalar 404'tü)
+- [x] **IndexNow**: Bing/Yandex/DuckDuckGo anında dizinleme (anahtar dosyası kökte; ping `scripts/indexnow-ping.sh`, GitHub Actions otomatik tetikler)
 - [x] **Mobile-Friendly**: Responsive tasarım
 - [x] **Page Speed**: Optimizasyonlar uygulandı
 - [x] **Image Optimization**: Alt text ve boyut optimizasyonu
