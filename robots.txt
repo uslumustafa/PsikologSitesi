@@ -30,7 +30,7 @@ Allow: /*.svg$
 Allow: /*.pdf$
 
 # Sitemap location
-Sitemap: https://gebzepsikologonuruslu.com/sitemap.xml
+Sitemap: https://www.gebzepsikologonuruslu.com/sitemap.xml
 
 # Crawl delay (optional - be respectful to server)
 Crawl-delay: 1

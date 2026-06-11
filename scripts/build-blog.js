@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const DOMAIN = 'https://gebzepsikologonuruslu.com';
+const DOMAIN = 'https://www.gebzepsikologonuruslu.com';
 const BLOG_DIR = path.join(ROOT, 'blog');
 
 // Blogların gerçek doğruluk kaynağı production'da MongoDB'dir (admin panelinden
