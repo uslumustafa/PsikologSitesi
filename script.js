@@ -305,6 +305,7 @@ if (contactForm) {
             if (response.ok) {
                 // Show success message
                 showSuccessMessage('Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağım.');
+                trackEvent('Form', 'iletisim_formu_gonderildi', 'contact-form');
                 contactForm.reset();
 
                 // Clear validation states

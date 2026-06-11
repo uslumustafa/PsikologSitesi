@@ -1,0 +1,33 @@
+name: IndexNow bildirimi
+
+# Site içeriği değişince Bing/Yandex/DuckDuckGo'ya anında haber verir (IndexNow protokolü).
+# Google bu protokolü dinlemez — Google tarafı Search Console üzerinden yönetiliyor.
+# Not: Blog rebuild bot'unun "[skip ci]" commit'leri bu workflow'u tetiklemez;
+# o durumda ping'i rebuild-blog.yml kendi içinde atar.
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'sitemap.xml'
+      - 'blog/**'
+      - '*.html'
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repoyu çek
+        uses: actions/checkout@v4
+
+      - name: IndexNow'a bildir
+        # Cloudflare'in yeni içeriği yayınlaması için kısa bekleme.
+        run: |
+          sleep 90
+          bash scripts/indexnow-ping.sh
