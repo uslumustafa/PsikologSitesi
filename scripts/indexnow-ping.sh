@@ -7,7 +7,8 @@ set -euo pipefail
 KEY="96589ed4b3ffcac27e71b7ba373f5d8e"
 HOST="www.gebzepsikologonuruslu.com"
 
-URLS=$(grep -o '<loc>[^<]*</loc>' sitemap.xml | sed -e 's|</\?loc>||g' -e 's|.*|"&"|' | paste -sd, -)
+# BSD (macOS) ve GNU sed'de aynı çalışsın diye \? gibi GNU'ya özgü desen yok.
+URLS=$(grep -o '<loc>[^<]*</loc>' sitemap.xml | sed -e 's|<loc>||g' -e 's|</loc>||g' -e 's|.*|"&"|' | paste -sd, -)
 
 curl -sS -X POST "https://api.indexnow.org/indexnow" \
   -H "Content-Type: application/json; charset=utf-8" \
