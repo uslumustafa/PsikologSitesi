@@ -19,8 +19,10 @@ async function loadAdminSettings() {
             const backendSettings = result.data;
             if (backendSettings) {
                 const settings = {
-                    siteTitle: backendSettings.general?.siteTitle,
-                    siteDescription: backendSettings.general?.siteDescription,
+                    // siteTitle/siteDescription BİLEREK alınmıyor: SEO'nun tek doğru
+                    // kaynağı index.html'deki <title> ve meta description'dır. Google JS
+                    // çalıştırarak taradığı için buradan üzerine yazılan eski metin
+                    // arama sonucu snippet'ine girmişti (bkz. "756 danışan" olayı).
                     phone: backendSettings.general?.phone,
                     email: backendSettings.general?.email,
                     address: backendSettings.general?.address,
@@ -54,18 +56,7 @@ async function loadAdminSettings() {
 }
 
 function applySettings(settings) {
-    // Site başlığını güncelle
-    if (settings.siteTitle) {
-        document.title = settings.siteTitle;
-        const titleMeta = document.querySelector('meta[name="title"]');
-        if (titleMeta) titleMeta.content = settings.siteTitle;
-    }
-
-    // Site açıklamasını güncelle
-    if (settings.siteDescription) {
-        const descMeta = document.querySelector('meta[name="description"]');
-        if (descMeta) descMeta.content = settings.siteDescription;
-    }
+    // NOT: title ve meta description'a burada ASLA dokunma — SEO kaynağı index.html.
 
     // Telefon numarasını güncelle
     if (settings.phone) {
