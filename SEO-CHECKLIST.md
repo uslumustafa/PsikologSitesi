@@ -70,38 +70,35 @@
 
 ## 🔄 Yapılması Gerekenler
 
-### 1. Google My Business Kurulumu
-- [ ] Google My Business hesabı oluştur
-- [ ] İşletme bilgilerini doğrula
-- [ ] Fotoğraflar yükle
-- [ ] Müşteri yorumları topla
-- [ ] Düzenli güncellemeler yap
+### 1. Google My Business Kurulumu ✅
+- [x] Google İşletme Profili mevcut (5.0★, 80 yorum)
+- [x] İşletme bilgileri doğrulandı, web sitesi + randevu linki bağlı
+- [x] Fotoğraflar yüklü
+- [ ] Müşteri yorumları toplamaya devam et (süreklilik işi)
+- [ ] Düzenli güncellemeler yap (süreklilik işi)
 
 ### 2. Google Analytics Kurulumu
-- [ ] GA4 hesabı oluştur
-- [ ] Measurement ID'yi güncelle (GA_MEASUREMENT_ID)
-- [ ] Conversion goals ayarla
-- [ ] E-commerce tracking (eğer gerekirse)
+- [ ] GA4 mülkü oluştur
+- [ ] Measurement ID'yi güncelle (index.html'deki GA_MEASUREMENT_ID)
+- [ ] Conversion goals ayarla (form gönderimi)
 
-### 3. Google Tag Manager
-- [ ] GTM hesabı oluştur
-- [ ] Container ID'yi güncelle (GTM-XXXXXXX)
-- [ ] Tags ve triggers ayarla
+### 3. Google Tag Manager ✅ (gerek kalmadı)
+- [x] GTM yer tutucu kodu kaldırıldı — GA4 doğrudan gtag.js ile bağlanacak, bu site için GTM gereksiz
 
-### 4. SSL Sertifikası
-- [ ] SSL sertifikası kur
-- [ ] HTTPS yönlendirmesi aktif et (.htaccess'te)
-- [ ] Mixed content uyarılarını düzelt
+### 4. SSL Sertifikası ✅
+- [x] SSL Cloudflare üzerinden otomatik (site Cloudflare Workers'ta, Apache/.htaccess kullanılmıyor)
+- [x] HTTPS + www yönlendirmesi aktif (_worker.js: apex → www 301)
+- [x] Mixed content yok (tüm kaynaklar https)
 
 ### 5. İçerik Geliştirme
-- [ ] Blog yazıları ekle
-- [ ] FAQ sayfası oluştur
-- [ ] Hizmet sayfaları detaylandır
-- [ ] Müşteri hikayeleri ekle
+- [x] Blog yazıları eklendi (5 yazı + /blog/ statik SEO sayfaları, 6 saatte bir otomatik yenilenir)
+- [x] SSS bölümü eklendi (ana sayfa #sss + FAQPage schema)
+- [ ] Hizmet sayfaları detaylandır (ayrı hizmet sayfaları açılabilir)
+- [ ] Müşteri hikayeleri ekle (etik/gizlilik açısından dikkatli kurgulanmalı)
 
-### 6. Backlink Stratejisi
-- [ ] Yerel dizinlere kayıt ol
-- [ ] Profesyonel ağlarda profil oluştur
+### 6. Backlink Stratejisi (el işi — kod dışı)
+- [ ] Yerel dizinlere kayıt ol (örn. Armut, DoktorTakvimi/uzmanlar, Yandex Haritalar, Bing Places)
+- [ ] Profesyonel ağlarda profil oluştur (LinkedIn, Psikologlar Derneği listeleri)
 - [ ] Guest posting yap
 - [ ] Partner web siteleri ile bağlantı kur
 
@@ -131,18 +128,19 @@
 ```
 /
 ├── index.html (Ana sayfa)
-├── style.css (Stil dosyası)
+├── style.css + assets/tailwind.css (Stil dosyaları)
 ├── script.js (JavaScript)
-├── sitemap.xml (Site haritası)
+├── sitemap.xml (Site haritası — scripts/build-blog.js üretir)
 ├── robots.txt (Robot yönergeleri)
-├── .htaccess (Apache yapılandırması)
+├── _worker.js + wrangler.jsonc (Cloudflare Worker: www yönlendirme + statik sunum)
+├── blog/ (SEO için statik blog sayfaları)
 └── images/ (Görseller)
 ```
 
 ### Önemli URL'ler
-- Ana sayfa: https://psikologonuruslu.com/
-- Sitemap: https://psikologonuruslu.com/sitemap.xml
-- Robots: https://psikologonuruslu.com/robots.txt
+- Ana sayfa: https://www.gebzepsikologonuruslu.com/
+- Sitemap: https://www.gebzepsikologonuruslu.com/sitemap.xml
+- Robots: https://www.gebzepsikologonuruslu.com/robots.txt
 
 ### İletişim Bilgileri
 - **Telefon**: +90 553 026 37 74

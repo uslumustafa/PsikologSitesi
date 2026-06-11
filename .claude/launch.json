@@ -7,6 +7,12 @@
       "runtimeArgs": ["server.js"],
       "cwd": "backend",
       "port": 5002
+    },
+    {
+      "name": "psikolog-frontend",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8090"],
+      "port": 8090
     }
   ]
 }

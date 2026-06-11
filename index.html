@@ -52,16 +52,6 @@
         gtag('config', 'GA_MEASUREMENT_ID');
     </script>
 
-    <!-- Google Tag Manager -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || []; w[l].push({
-                'gtm.start':
-                    new Date().getTime(), event: 'gtm.js'
-            }); var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-XXXXXXX');</script>
-
     <!-- Preload critical resources -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
         as="style">
@@ -114,6 +104,64 @@
         "name": "Psikolog Onur Uslu",
         "alternateName": ["Gebze Psikolog Onur Uslu", "gebzepsikologonuruslu.com"],
         "url": "https://www.gebzepsikologonuruslu.com/"
+    }
+    </script>
+
+    <!-- Schema.org: SSS (sayfadaki #sss bölümüyle birebir aynı içerik) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Hangi konularda destek veriyorsunuz?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Kaygı, depresyon, stres yönetimi gibi bireysel konuların yanı sıra çift ve aile danışmanlığı ile çocuk ve ergen danışmanlığı hizmetleri veriyorum. Çalışmalarımda ağırlıklı olarak Bilişsel Davranışçı Terapi (BDT) ve şema terapi yaklaşımlarını kullanıyorum."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Online terapi nasıl yapılıyor?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Online seanslar görüntülü görüşme yoluyla yapılır. Bulunduğunuz şehirden bağımsız olarak, internet bağlantınızın olduğu sessiz ve rahat bir ortamdan seansa katılmanız yeterlidir. Online terapi, yüz yüze terapiyle benzer etkinlikte yürütülür."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Randevu nasıl alabilirim?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Telefon veya WhatsApp üzerinden 0553 026 37 74 numarasından ulaşabilir ya da sitedeki iletişim formunu doldurabilirsiniz. İlk adım olarak ücretsiz bir ön görüşme yapıyoruz."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Yüz yüze görüşmeler nerede yapılıyor?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yüz yüze seanslar Gebze'deki (Kocaeli) ofisimde yapılmaktadır. Gebze dışında yaşıyorsanız veya ofise gelmeniz zorsa online seans seçeneğini tercih edebilirsiniz."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Görüşmeler gizli mi?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Evet. Seanslarda paylaştığınız her şey meslek etiği ve gizlilik ilkeleri çerçevesinde korunur. Kişisel verileriniz KVKK kapsamında işlenir; detayları sitedeki gizlilik politikası ve KVKK aydınlatma metninde bulabilirsiniz."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "İlk seansta ne olur?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "İlk görüşme bir tanışma ve değerlendirme seansıdır: sizi buraya getiren konuyu birlikte ele alır, ihtiyaçlarınızı netleştirir ve terapi sürecinin hedeflerini birlikte belirleriz. Sorularınızı sormanız ve sürecin size uygun olup olmadığını değerlendirmeniz için de bir fırsattır."
+                }
+            }
+        ]
     }
     </script>
 
@@ -279,10 +327,6 @@
     <div id="preloader">
         <div class="spinner"></div>
     </div>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
-            style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
 
     <!-- Header / Navigation -->
     <header id="header" class="bg-white/90 backdrop-blur-lg sticky top-0 z-50 custom-shadow">
@@ -296,6 +340,7 @@
                 <a href="#hizmetler"
                     class="text-gray-600 hover:text-primary-600 transition-colors font-medium">Hizmetler</a>
                 <a href="#blog" class="text-gray-600 hover:text-primary-600 transition-colors font-medium">Yazılar</a>
+                <a href="#sss" class="text-gray-600 hover:text-primary-600 transition-colors font-medium">SSS</a>
                 <a href="#iletisim"
                     class="bg-primary-600 text-white px-6 py-2.5 rounded-full hover:bg-primary-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Randevu
                     Al</a>
@@ -309,6 +354,7 @@
             <a href="#hakkimda" class="block py-2 text-gray-600 hover:text-primary">Hakkımda</a>
             <a href="#hizmetler" class="block py-2 text-gray-600 hover:text-primary">Hizmetler</a>
             <a href="#blog" class="block py-2 text-gray-600 hover:text-primary">Yazılar</a>
+            <a href="#sss" class="block py-2 text-gray-600 hover:text-primary">SSS</a>
             <a href="#iletisim"
                 class="block mt-2 bg-primary text-white text-center px-4 py-2 rounded-lg hover:opacity-90">Randevu
                 Al</a>
@@ -736,6 +782,82 @@
                         class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors">
                         Tüm Yazıları Gör <i class="fas fa-arrow-right"></i>
                     </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SSS (Sıkça Sorulan Sorular) Section -->
+        <section id="sss" class="py-24 scroll-mt-20 bg-white section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <div
+                        class="inline-flex items-center px-4 py-2 bg-primary-50 text-primary-800 rounded-full text-sm font-medium mb-6 border border-primary-100">
+                        <span class="w-2 h-2 bg-primary-500 rounded-full mr-2"></span>
+                        Sıkça Sorulan Sorular
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900">Merak Edilenler</h2>
+                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto font-light">Terapi süreci hakkında en sık
+                        aldığım soruları ve yanıtlarını aşağıda bulabilirsiniz.</p>
+                </div>
+                <div class="max-w-3xl mx-auto space-y-4" data-aos="fade-up" data-aos-delay="100">
+                    <details class="group bg-secondary-50 rounded-2xl border border-secondary-100 p-6">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-gray-900 list-none">
+                            <span>Hangi konularda destek veriyorsunuz?</span>
+                            <i class="fas fa-chevron-down text-primary-600 transition-transform duration-300 group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-4 text-gray-600 leading-relaxed">Kaygı, depresyon, stres yönetimi gibi bireysel
+                            konuların yanı sıra çift ve aile danışmanlığı ile çocuk ve ergen danışmanlığı hizmetleri
+                            veriyorum. Çalışmalarımda ağırlıklı olarak Bilişsel Davranışçı Terapi (BDT) ve şema terapi
+                            yaklaşımlarını kullanıyorum.</p>
+                    </details>
+                    <details class="group bg-secondary-50 rounded-2xl border border-secondary-100 p-6">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-gray-900 list-none">
+                            <span>Online terapi nasıl yapılıyor?</span>
+                            <i class="fas fa-chevron-down text-primary-600 transition-transform duration-300 group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-4 text-gray-600 leading-relaxed">Online seanslar görüntülü görüşme yoluyla yapılır.
+                            Bulunduğunuz şehirden bağımsız olarak, internet bağlantınızın olduğu sessiz ve rahat bir
+                            ortamdan seansa katılmanız yeterlidir. Online terapi, yüz yüze terapiyle benzer etkinlikte
+                            yürütülür.</p>
+                    </details>
+                    <details class="group bg-secondary-50 rounded-2xl border border-secondary-100 p-6">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-gray-900 list-none">
+                            <span>Randevu nasıl alabilirim?</span>
+                            <i class="fas fa-chevron-down text-primary-600 transition-transform duration-300 group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-4 text-gray-600 leading-relaxed">Telefon veya WhatsApp üzerinden
+                            <a href="tel:+905530263774" class="text-primary-700 font-medium hover:underline">0553 026 37 74</a>
+                            numarasından ulaşabilir ya da sitedeki iletişim formunu doldurabilirsiniz. İlk adım olarak
+                            ücretsiz bir ön görüşme yapıyoruz.</p>
+                    </details>
+                    <details class="group bg-secondary-50 rounded-2xl border border-secondary-100 p-6">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-gray-900 list-none">
+                            <span>Yüz yüze görüşmeler nerede yapılıyor?</span>
+                            <i class="fas fa-chevron-down text-primary-600 transition-transform duration-300 group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-4 text-gray-600 leading-relaxed">Yüz yüze seanslar Gebze'deki (Kocaeli) ofisimde
+                            yapılmaktadır. Gebze dışında yaşıyorsanız veya ofise gelmeniz zorsa online seans seçeneğini
+                            tercih edebilirsiniz.</p>
+                    </details>
+                    <details class="group bg-secondary-50 rounded-2xl border border-secondary-100 p-6">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-gray-900 list-none">
+                            <span>Görüşmeler gizli mi?</span>
+                            <i class="fas fa-chevron-down text-primary-600 transition-transform duration-300 group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-4 text-gray-600 leading-relaxed">Evet. Seanslarda paylaştığınız her şey meslek etiği
+                            ve gizlilik ilkeleri çerçevesinde korunur. Kişisel verileriniz KVKK kapsamında işlenir;
+                            detayları sitedeki gizlilik politikası ve KVKK aydınlatma metninde bulabilirsiniz.</p>
+                    </details>
+                    <details class="group bg-secondary-50 rounded-2xl border border-secondary-100 p-6">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-gray-900 list-none">
+                            <span>İlk seansta ne olur?</span>
+                            <i class="fas fa-chevron-down text-primary-600 transition-transform duration-300 group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-4 text-gray-600 leading-relaxed">İlk görüşme bir tanışma ve değerlendirme seansıdır:
+                            sizi buraya getiren konuyu birlikte ele alır, ihtiyaçlarınızı netleştirir ve terapi sürecinin
+                            hedeflerini birlikte belirleriz. Sorularınızı sormanız ve sürecin size uygun olup olmadığını
+                            değerlendirmeniz için de bir fırsattır.</p>
+                    </details>
                 </div>
             </div>
         </section>
