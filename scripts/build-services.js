@@ -292,7 +292,7 @@ ${schemas(svc)}
 ${body}
 <footer class="site"><div class="wrap">
   <p>Psikolog Onur Uslu &middot; Gebze, Kocaeli &middot; <a href="tel:${PHONE_TEL}">${PHONE_DISPLAY}</a></p>
-  <p>&copy; ${new Date().getFullYear()} Tüm hakları saklıdır. &middot; <a href="/kvkk.html">KVKK</a> &middot; <a href="/gizlilik-politikasi.html">Gizlilik</a></p>
+  <p>&copy; ${new Date().getFullYear()} Tüm hakları saklıdır. &middot; <a href="/kvkk">KVKK</a> &middot; <a href="/gizlilik-politikasi">Gizlilik</a></p>
 </div></footer>
 </body>
 </html>

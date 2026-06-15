@@ -81,13 +81,13 @@ const STATIC_PAGES = [
   { loc: '/cocuk-ergen-danismanligi/', changefreq: 'monthly', priority: '0.9' },
   { loc: '/online-terapi/', changefreq: 'monthly', priority: '0.9' },
   { loc: '/aile-danismanligi/', changefreq: 'monthly', priority: '0.9' },
-  { loc: '/kvkk.html', changefreq: 'yearly', priority: '0.3' },
-  { loc: '/gizlilik-politikasi.html', changefreq: 'yearly', priority: '0.3' },
-  { loc: '/cerez-politikasi.html', changefreq: 'yearly', priority: '0.3' },
-  { loc: '/kullanim-kosullari.html', changefreq: 'yearly', priority: '0.3' },
-  { loc: '/hasta-haklari.html', changefreq: 'yearly', priority: '0.3' },
-  { loc: '/mesafeli-satis-sozlesmesi.html', changefreq: 'yearly', priority: '0.3' },
-  { loc: '/iptal-iade-kosullari.html', changefreq: 'yearly', priority: '0.3' }
+  { loc: '/kvkk', changefreq: 'yearly', priority: '0.3' },
+  { loc: '/gizlilik-politikasi', changefreq: 'yearly', priority: '0.3' },
+  { loc: '/cerez-politikasi', changefreq: 'yearly', priority: '0.3' },
+  { loc: '/kullanim-kosullari', changefreq: 'yearly', priority: '0.3' },
+  { loc: '/hasta-haklari', changefreq: 'yearly', priority: '0.3' },
+  { loc: '/mesafeli-satis-sozlesmesi', changefreq: 'yearly', priority: '0.3' },
+  { loc: '/iptal-iade-kosullari', changefreq: 'yearly', priority: '0.3' }
 ];
 
 const CATEGORY_LABELS = {
@@ -179,7 +179,7 @@ ${head}
 ${body}
 <footer class="site"><div class="wrap">
   <p>Psikolog Onur Uslu &middot; Gebze, Kocaeli &middot; <a href="tel:+905530263774">+90 553 026 37 74</a></p>
-  <p>&copy; ${new Date().getFullYear()} Tüm hakları saklıdır. &middot; <a href="/kvkk.html">KVKK</a> &middot; <a href="/gizlilik-politikasi.html">Gizlilik</a></p>
+  <p>&copy; ${new Date().getFullYear()} Tüm hakları saklıdır. &middot; <a href="/kvkk">KVKK</a> &middot; <a href="/gizlilik-politikasi">Gizlilik</a></p>
 </div></footer>
 </body>
 </html>`;
