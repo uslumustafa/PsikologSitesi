@@ -292,6 +292,13 @@ function renderHub() {
 <meta property="og:title" content="Blog | Psikolog Onur Uslu">
 <meta property="og:description" content="Psikoloji, terapi, kaygı ve ruh sağlığı üzerine yazılar.">
 <meta property="og:url" content="${esc(url)}">
+<meta property="og:image" content="${DOMAIN}/images/psikolog-onur-uslu-professional.jpg">
+<meta property="og:site_name" content="Psikolog Onur Uslu">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog | Psikolog Onur Uslu">
+<meta name="twitter:description" content="Psikoloji, terapi, kaygı ve ruh sağlığı üzerine yazılar.">
+<meta name="twitter:image" content="${DOMAIN}/images/psikolog-onur-uslu-professional.jpg">
 <script type="application/ld+json">${JSON.stringify(itemList)}</script>`;
 
   const body = `

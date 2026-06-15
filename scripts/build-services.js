@@ -270,6 +270,12 @@ function renderService(svc) {
 <meta property="og:url" content="${url}">
 <meta property="og:type" content="website">
 <meta property="og:image" content="${DOMAIN}/images/psikolog-onur-uslu-professional.jpg">
+<meta property="og:site_name" content="Psikolog Onur Uslu">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(svc.title)}">
+<meta name="twitter:description" content="${esc(svc.description)}">
+<meta name="twitter:image" content="${DOMAIN}/images/psikolog-onur-uslu-professional.jpg">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-19VE4N9DD5"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-19VE4N9DD5');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
