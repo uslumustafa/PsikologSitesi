@@ -885,7 +885,7 @@ async function loadGoogleReviews() {
                         <div class="font-bold text-gray-900 text-sm">${_escapeHtml(r.author || '')}</div>
                         <div class="text-xs text-gray-500">Google Yorumu</div>
                     </div>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                    <img src="/images/google-g-logo.svg"
                         alt="Google" class="w-5 h-5 ml-auto">
                 </div>
                 <div class="flex items-center mb-3">
