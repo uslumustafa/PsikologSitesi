@@ -46,8 +46,8 @@ const SERVICES = [
   {
     slug: 'cift-terapisi',
     name: 'Çift Danışmanlığı',
-    title: "Gebze Çift Terapisi | İlişki ve Evlilik Danışmanlığı — Psikolog Onur Uslu",
-    description: "Gebze'de çift terapisi: iletişim sorunları, çatışmalar, güven ve bağlanma. Sağlıklı ve sürdürülebilir bir ilişki için çözüm odaklı danışmanlık. Online seçeneğiyle.",
+    title: "Gebze Çift Terapisi | İlişki Danışmanlığı — Onur Uslu",
+    description: "Gebze'de çift terapisi: iletişim sorunları, çatışmalar ve güven kaybı. Sağlıklı, kalıcı bir ilişki için çözüm odaklı danışmanlık. Online seçeneğiyle.",
     h1: "Gebze'de Çift Terapisi ve İlişki Danışmanlığı",
     intro: [
       "Her ilişkide zorlu dönemler olur; önemli olan bu dönemlerde birbirini duyabilmektir. Çift terapisinde iletişim sorunları, tekrarlayan çatışmalar, güven sarsılmaları ve duygusal uzaklaşma gibi konuları güvenli bir ortamda birlikte ele alıyoruz.",
