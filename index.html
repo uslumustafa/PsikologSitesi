@@ -188,7 +188,10 @@
             "latitude": "40.8028",
             "longitude": "29.4306"
         },
-        "openingHours": "Mo-Fr 09:00-18:00, Sa 09:00-15:00",
+        "openingHours": [
+            "Mo-Fr 09:00-18:00",
+            "Sa 09:00-15:00"
+        ],
         "priceRange": "$$",
         "currenciesAccepted": "TRY",
         "paymentAccepted": "Cash, Credit Card, Bank Transfer",
@@ -251,8 +254,14 @@
             "jobTitle": "Psikolog",
             "description": "Selçuk Üniversitesi Psikoloji mezunu; İstanbul Gedik Üniversitesi Klinik Psikoloji (Tezli Yüksek Lisans) öğrencisi, BDT uzmanı",
             "alumniOf": [
-                "Selçuk Üniversitesi",
-                "İstanbul Gedik Üniversitesi"
+                {
+                    "@type": "EducationalOrganization",
+                    "name": "Selçuk Üniversitesi"
+                },
+                {
+                    "@type": "EducationalOrganization",
+                    "name": "İstanbul Gedik Üniversitesi"
+                }
             ],
             "knowsAbout": [
                 "Bilişsel Davranışçı Terapi",
