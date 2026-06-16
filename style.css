@@ -704,3 +704,17 @@ img {
 .blog-content ol { list-style: decimal; padding-left: 1.5rem; }
 .blog-content li { margin-bottom: 0.4rem; }
 .blog-content p { margin-bottom: 0.75rem; }
+
+/* Hizmetler bölümü: 5 kartı dengeli ortala (son sıradaki kartlar boşlukta değil, ortada) */
+#services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+#services-grid > div { width: 100%; }            /* mobil: tek sütun */
+@media (min-width: 768px) {                       /* tablet: 2 sütun */
+  #services-grid > div { width: calc(50% - 1rem); }
+}
+@media (min-width: 1024px) {                      /* masaüstü: 3 sütun */
+  #services-grid > div { width: calc(33.333% - 1.34rem); }
+}
