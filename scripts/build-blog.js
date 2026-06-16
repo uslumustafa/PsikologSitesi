@@ -277,7 +277,7 @@ function renderHub() {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'Blog | Psikolog Onur Uslu',
-    description: 'Psikoloji, terapi ve ruh sağlığı üzerine yazılar: kaygı, depresyon, ilişkiler, öz-şefkat ve şema terapi. Gebze Psikolog Onur Uslu'nun blog yazıları.',
+    description: 'Psikoloji, terapi ve ruh sağlığı üzerine yazılar: kaygı, depresyon, ilişkiler, öz-şefkat ve şema terapi. Gebze Psikolog Onur Uslu\'nun blog yazıları.',
     url,
     hasPart: posts.map(p => ({
       '@type': 'Article',
@@ -318,7 +318,7 @@ function renderHub() {
 
   return pageShell({
     title: 'Blog | Psikolog Onur Uslu',
-    description: 'Psikoloji, terapi ve ruh sağlığı üzerine yazılar: kaygı, depresyon, ilişkiler, öz-şefkat ve şema terapi. Gebze Psikolog Onur Uslu'nun blog yazıları.',
+    description: 'Psikoloji, terapi ve ruh sağlığı üzerine yazılar: kaygı, depresyon, ilişkiler, öz-şefkat ve şema terapi. Gebze Psikolog Onur Uslu\'nun blog yazıları.',
     canonical: url,
     head,
     body
