@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müşteriler - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white shadow-lg relative">
+            <div class="p-6">
+                <div class="flex items-center mb-8">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-user-shield text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold">Admin Panel</h2>
+                        <p class="text-sm text-white/80">Psikolog Onur Uslu</p>
+                    </div>
+                </div>
+
+                <nav class="space-y-2">
+                    <a href="dashboard.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-tachometer-alt mr-3"></i>
+                        Dashboard
+                    </a>
+                    <a href="appointments.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-calendar-alt mr-3"></i>
+                        Randevular
+                    </a>
+                    <a href="customers.html"
+                        class="nav-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-users mr-3"></i>
+                        Müşteriler
+                    </a>
+                    <a href="blog-management.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-blog mr-3"></i>
+                        Blog Yönetimi
+                    </a>
+                    <a href="site-settings.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-cogs mr-3"></i>
+                        Hizmetler
+                    </a>
+                    <a href="messages.html"
+                        class="nav-item flex items-center px-4 py-3 rounded-lg transition-all duration-200">
+                        <i class="fas fa-envelope mr-3"></i>
+                        Mesajlar
+                    </a>
+                </nav>
+            </div>
+
+            <div class="absolute bottom-0 w-64 p-6">
+                <button id="logoutBtn"
+                    class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Çıkış Yap
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Müşteriler</h1>
+                        <p class="text-gray-600">Kayıtlı müşterileri görüntüle</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-right">
+                            <p class="font-semibold text-gray-800" id="adminName">Admin</p>
+                            <p class="text-sm text-gray-600">Yönetici</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Search + summary -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div class="relative w-full md:w-80">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input id="searchInput" type="text" placeholder="İsim veya e-posta ara..."
+                                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            Toplam müşteri: <span id="totalCount" class="font-semibold text-gray-800">—</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Ad Soyad</th>
+                                    <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        E-posta</th>
+                                    <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Telefon</th>
+                                    <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Kayıt Tarihi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersBody" class="divide-y divide-gray-100">
+                                <tr>
+                                    <td colspan="4" class="px-6 py-10 text-center text-gray-500">
+                                        <i class="fas fa-spinner fa-spin mr-2"></i>Yükleniyor...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination"
+                        class="flex items-center justify-between px-6 py-4 border-t border-gray-200 hidden">
+                        <p class="text-sm text-gray-600" id="pageInfo"></p>
+                        <div class="flex gap-2">
+                            <button id="prevBtn"
+                                class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                                <i class="fas fa-chevron-left"></i> Önceki
+                            </button>
+                            <button id="nextBtn"
+                                class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                                Sonraki <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="/api-config.js"></script>
+    <script>
+        const adminToken = localStorage.getItem('adminToken');
+        const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+
+        // Auth guard
+        if (!adminToken) {
+            window.location.href = 'login.html';
+        }
+        if (adminUser && adminUser.name) {
+            document.getElementById('adminName').textContent = adminUser.name;
+        }
+
+        let currentPage = 1;
+        let totalPages = 1;
+        let searchTerm = '';
+        let searchTimer = null;
+
+        const body = document.getElementById('customersBody');
+
+        function escapeHtml(str) {
+            return String(str ?? '').replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[m]));
+        }
+
+        function formatDate(d) {
+            if (!d) return '—';
+            const date = new Date(d);
+            if (isNaN(date)) return '—';
+            return date.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        function rowsState(message, isError) {
+            body.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center ${isError ? 'text-red-500' : 'text-gray-500'}">${message}</td></tr>`;
+        }
+
+        async function loadCustomers() {
+            rowsState('<i class="fas fa-spinner fa-spin mr-2"></i>Yükleniyor...', false);
+            try {
+                const params = new URLSearchParams({ page: currentPage, limit: 10 });
+                if (searchTerm) params.set('search', searchTerm);
+
+                const res = await fetch(`${API_URL}/admin/customers?${params.toString()}`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.removeItem('adminToken');
+                    localStorage.removeItem('adminUser');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+
+                const json = await res.json();
+                const customers = json?.data?.customers || [];
+                const pagination = json?.data?.pagination || { total: 0, pages: 1, page: 1 };
+
+                totalPages = pagination.pages || 1;
+                currentPage = pagination.page || 1;
+                document.getElementById('totalCount').textContent = pagination.total ?? customers.length;
+
+                if (!customers.length) {
+                    rowsState(searchTerm ? 'Aramanızla eşleşen müşteri bulunamadı.' : 'Henüz kayıtlı müşteri yok.', false);
+                    document.getElementById('pagination').classList.add('hidden');
+                    return;
+                }
+
+                body.innerHTML = customers.map(c => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-medium text-gray-800">${escapeHtml(c.name) || '—'}</td>
+                        <td class="px-6 py-4 text-gray-600">${escapeHtml(c.email) || '—'}</td>
+                        <td class="px-6 py-4 text-gray-600">${escapeHtml(c.phone) || '—'}</td>
+                        <td class="px-6 py-4 text-gray-600">${formatDate(c.createdAt)}</td>
+                    </tr>
+                `).join('');
+
+                // Pagination UI
+                const pag = document.getElementById('pagination');
+                pag.classList.remove('hidden');
+                document.getElementById('pageInfo').textContent = `Sayfa ${currentPage} / ${totalPages}`;
+                document.getElementById('prevBtn').disabled = currentPage <= 1;
+                document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+            } catch (err) {
+                console.error('Müşteriler yüklenemedi:', err);
+                rowsState('<i class="fas fa-exclamation-circle mr-2"></i>Müşteriler yüklenemedi. Lütfen tekrar deneyin.', true);
+                document.getElementById('pagination').classList.add('hidden');
+            }
+        }
+
+        // Search (debounced)
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                searchTerm = e.target.value.trim();
+                currentPage = 1;
+                loadCustomers();
+            }, 350);
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentPage > 1) { currentPage--; loadCustomers(); }
+        });
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentPage < totalPages) { currentPage++; loadCustomers(); }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            window.location.href = 'login.html';
+        });
+
+        loadCustomers();
+    </script>
+</body>
+
+</html>
