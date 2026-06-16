@@ -350,25 +350,9 @@ function showErrorMessage(message) {
     }, 5000);
 }
 
-// ===== TYPING ANIMATION =====
-const heroTitle = document.querySelector('#hero h1');
-if (heroTitle) {
-    const originalText = heroTitle.innerHTML;
-    heroTitle.innerHTML = '';
-    heroTitle.style.visibility = 'visible';
-
-    let index = 0;
-    function typeWriter() {
-        if (index < originalText.length) {
-            heroTitle.innerHTML = originalText.slice(0, index + 1);
-            index++;
-            setTimeout(typeWriter, 22);
-        }
-    }
-
-    // Start typing after page load
-    setTimeout(typeWriter, 250);
-}
+// ===== HERO BAŞLIĞI =====
+// Daktilo (typewriter) animasyonu kaldırıldı: başlığı boşaltıp karakter karakter
+// yazdığı için metin geç geliyordu. Başlık artık HTML ile birlikte anında görünür.
 
 // ===== TESTIMONIAL SLIDER =====
 let currentTestimonial = 0;
